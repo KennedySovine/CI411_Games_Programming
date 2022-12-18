@@ -1,0 +1,3 @@
+﻿  CI411_Week2.cpp
+C:\Users\kis16\OneDrive - University of Brighton\KIS16_Modules\CI411 - Introduction to Game Programming\Workshops\CI411_Week2\CI411_Week2.cpp(25,27): warning C4305: 'initializing': truncation from 'double' to 'float'
+  CI411_Week2.vcxproj -> C:\Users\kis16\OneDrive - University of Brighton\KIS16_Modules\CI411 - Introduction to Game Programming\Workshops\CI411_Week2\x64\Debug\CI411_Week2.exe
