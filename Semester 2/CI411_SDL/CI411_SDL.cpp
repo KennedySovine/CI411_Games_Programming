@@ -40,6 +40,8 @@ void createWindow() {
 	SDL_Quit;
 }
 
+//HALLO
+
 void referencesExamples() {
 
 	printf("Reference Example\n");
