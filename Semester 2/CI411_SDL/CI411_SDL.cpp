@@ -21,7 +21,6 @@ void pointerExample();
 int main(int argc, char* args[]){
 	
 	referencesExamples();
-	createWindow();
 	referencesFunctionsEx();
 	pointerExample();
 
@@ -40,8 +39,6 @@ void createWindow() {
 	SDL_Delay(5000);
 	SDL_Quit;
 }
-
-//HALLO
 
 void referencesExamples() {
 
