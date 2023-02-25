@@ -21,7 +21,6 @@ void pointerExample();
 int main(int argc, char* args[]){
 	
 	referencesExamples();
-	createWindow();
 	referencesFunctionsEx();
 	pointerExample();
 
