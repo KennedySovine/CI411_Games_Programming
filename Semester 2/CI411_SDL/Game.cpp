@@ -71,12 +71,21 @@ void Game::createGameObjects()
 	pc = new GameObject("assets/images/Star_Blue.png", 49, 164);
 	npc = new GameObject("assets/images/Star_Red.png", 108, 94);
 	npc_2 = new GameObject("assets/images/Star_Yellow.png", 80, 100);
+
+	//Make the straight line of objects
 	for (int i = 0; i < (sizeof(tiles) / sizeof(tiles[0])); i++) {
 		tiles[i] = new GameObject("assets/images/Star_Yellow.png", i, i);
 	}
+
+	//Make the 2D array of stuff
 	for (int row = 0; row < (sizeof(tiles2D) / sizeof(tiles2D[0])); row++) {
 		for (int col = 0; col < (sizeof(tiles2D) / sizeof(tiles2D[0])); col++) {
-			tiles2D[row][col] = new GameObject("assets/images/Star_Yellow.png", col, row);
+			for (int i = 0; i < 600; i+10){
+				tiles2D[row][col] = new GameObject("assets/images/Star_Yellow.png", i, i);
+				if (i==600){
+					break;
+				}
+			}
 		}
 	}
 
@@ -108,12 +117,14 @@ void Game::update()
 	pc->update();
 	npc->update();
 	npc_2->update();
+
 	for (int i = 0; i < (sizeof(tiles) / sizeof(tiles[0])); i++) {
 		tiles[i]->update();
 	}
+	
 
-	for (int row = 0; row < (sizeof(tiles2D) / sizeof(tiles2D[0])); row += SPRITE_SIZE / 3) {
-		for (int col = 0; col < (sizeof(tiles2D) / sizeof(tiles2D[0])); col += SPRITE_SIZE / 3) {
+	for (int row = 0; row < (sizeof(tiles2D) / sizeof(tiles2D[0])); row++ ){
+		for (int col = 0; col < (sizeof(tiles2D) / sizeof(tiles2D[0])); row++) {
 			tiles2D[row][col]->update();
 		}
 	}
