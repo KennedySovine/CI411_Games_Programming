@@ -1,0 +1,6 @@
+﻿  Game.cpp
+  GameObjects.cpp
+  Main.cpp
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411_Games_Programming\Semester 2\CI411_SDL\Main.cpp(38,52): warning C4244: 'argument': conversion from 'Uint64' to 'Uint32', possible loss of data
+  Generating Code...
+  CI411_SDL.vcxproj -> C:\Users\thatc\source\repos\KennedySovine\CI411_Games_Programming\Semester 2\CI411_SDL\x64\Debug\CI411_SDL.exe
