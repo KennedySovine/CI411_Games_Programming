@@ -15,8 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CI411_SDL.cpp">
+    <ClCompile Include="..\..\..\..\..\..\OneDrive - University of Brighton\First_Year_Modules\CI411_Games_Programming\Semester 2\CI411_SDL\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\OneDrive - University of Brighton\First_Year_Modules\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\OneDrive - University of Brighton\First_Year_Modules\CI411_Games_Programming\Semester 2\CI411_SDL\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\OneDrive - University of Brighton\First_Year_Modules\CI411_Games_Programming\Semester 2\CI411_SDL\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\OneDrive - University of Brighton\First_Year_Modules\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
