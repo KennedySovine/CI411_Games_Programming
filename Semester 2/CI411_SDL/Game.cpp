@@ -6,20 +6,93 @@
 // SDL Variables
 SDL_Renderer* Game::renderer = nullptr;;
 SDL_Event Game::playerInputEvent;
+GameInput playerInput;
+
 // Game Objects
-GameObject* pc = nullptr;
-GameObject* npc = nullptr;
-GameObject* npc_2 = nullptr;
-GameObject* tiles[1000];
 GameObject* backGround = nullptr;
-GameObject* tiles2D[100][100];
+PlayerCharacter* pc = nullptr;
+GameObject* npcs[5] = {};
+
 
 // ======================================================= 
-Game::Game() // Constructor
+void Game::createGameObjects()
 {
-	printf(" \n\n ----- Game Started ------ \n");
-}
+	printf("\n creating Game Objects");
+	// Create Background
+	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
+	backGround->setSize(800, 600); // as not a standard sprite size
 
+	// Create Game Objects - filename , start  x and y position
+	pc = new PlayerCharacter("assets/images/Star_Blue.png", 64, 64);
+
+	// Create thg Array of NPCs
+	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
+	{
+		int xPos = 320 + i * SPRITE_SIZE;
+		int yPos = 480;
+		npcs[i] = new GameObject("assets/images/Star_Yellow.png", xPos, yPos);
+		npcs[i]->setAlive(true);
+	}
+}//----
+
+// ======================================================= 
+void Game::update(float frameTime)
+{
+	//Update PC
+	pc->movePCStep(playerInput.keyPressed);
+	//	pc->movePCSmooth(playerInput.keyPressed, frameTime);	
+	pc->updatePC();
+
+	// NPCs
+	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
+	{
+		npcs[i]->update();
+	}
+
+}//---
+
+// ======================================================= 
+void Game::render()
+{
+	SDL_RenderClear(renderer);
+	// render Objects
+	backGround->render();	
+	pc->renderPC();
+	
+	// Render All NPCs
+	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
+	{
+		if (npcs[i]->getAliveState() == true)  npcs[i]->render();
+	}
+
+	// Update the screen
+	SDL_RenderPresent(renderer);
+}//---
+
+// ======================================================= 
+void Game::handleEvents()
+{
+	// Reset Inputs
+	playerInput.keyPressed = NULL;
+
+	//Check for Events
+	SDL_PollEvent(&playerInputEvent);
+
+	switch (playerInputEvent.type)
+	{
+	case SDL_QUIT:
+		gameRunning = false;
+		break;
+
+	case SDL_KEYDOWN:
+		std::cout << "\n" << playerInputEvent.key.keysym.sym;
+		playerInput.keyPressed = playerInputEvent.key.keysym.sym;
+		break;
+
+	default:
+		break;
+	}
+}//---
 
 // ======================================================= 
 void Game::startSDL(const char* title)
@@ -42,14 +115,12 @@ void Game::startSDL(const char* title)
 	{
 		gameRunning = false;
 	}
-
 }//---
 
 // ======================================================= 
 
 void Game::welcomeScreen()
 {
-
 	GameObject* splashScreen;
 	splashScreen = new GameObject("assets/images/Start_Screen_800.png", 0, 0);
 	splashScreen->setSize(800, 600);
@@ -58,111 +129,12 @@ void Game::welcomeScreen()
 	SDL_Delay(2000);
 }//---
 
-
-// ======================================================= 
-void Game::createGameObjects()
-{
-	printf("\n creating Game Objects");
-	// Create Background
-	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
-	backGround->setSize(800, 600); // as not a standard sprite size
-
-	// Create Game Objects - filename , start  x and y position
-	pc = new GameObject("assets/images/Star_Blue.png", 49, 164);
-	npc = new GameObject("assets/images/Star_Red.png", 108, 94);
-	npc_2 = new GameObject("assets/images/Star_Yellow.png", 80, 100);
-
-	//Make the straight line of objects
-	for (int i = 0; i < (sizeof(tiles) / sizeof(tiles[0])); i++) {
-		tiles[i] = new GameObject("assets/images/Star_Yellow.png", i, i);
-	}
-
-	//Make the 2D array of stuff
-	for (int row = 0; row < (sizeof(tiles2D) / sizeof(tiles2D[0])); row++) {
-		for (int col = 0; col < (sizeof(tiles2D) / sizeof(tiles2D[0])); col++) {
-			for (int i = 0; i < 600; i + 10) {
-				tiles2D[row][col] = new GameObject("assets/images/Star_Yellow.png", i, i);
-				if (i == 600) {
-					break;
-				}
-			}
-		}
-	}
-
-}//----
-
-
-
-// ======================================================= 
-void Game::handleEvents()
-{
-	SDL_PollEvent(&playerInputEvent);
-
-	switch (playerInputEvent.type)
-	{
-	case SDL_QUIT:
-	{
-		gameRunning = false;
-		break;
-	}
-	default:
-		break;
-	}
-}//---
-
-// ======================================================= 
-void Game::update()
-{
-	//Update Game Objects
-	pc->update();
-	npc->update();
-	npc_2->update();
-
-	for (int i = 0; i < (sizeof(tiles) / sizeof(tiles[0])); i++) {
-		tiles[i]->update();
-	}
-
-
-	for (int row = 0; row < (sizeof(tiles2D) / sizeof(tiles2D[0])); row++) {
-		for (int col = 0; col < (sizeof(tiles2D) / sizeof(tiles2D[0])); row++) {
-			tiles2D[row][col]->update();
-		}
-	}
-
-
-
-}//---
-
-// ======================================================= 
-void Game::render()
-{
-	SDL_RenderClear(renderer);
-
-	// render Objects
-	backGround->render();
-	pc->render();
-	npc->render();
-	npc_2->render();
-	for (int i = 0; i < (sizeof(tiles) / sizeof(tiles[0])); i += SPRITE_SIZE / 3) {
-		tiles[i]->render();
-	}
-	/*for (int row = 0; row < (sizeof(tiles2D) / sizeof(tiles2D[0])); row += SPRITE_SIZE / 3) {
-		for (int col = 0; col < (sizeof(tiles2D) / sizeof(tiles2D[0])); col += SPRITE_SIZE / 3) {
-			tiles2D[row][col]->render();
-		}
-	}*/
-
-	// Update the screen
-	SDL_RenderPresent(renderer);
-}//---
-
 // ======================================================= 
 void Game::exitScreen()
 {
 	printf("\n\n ----- Thank you for playing -----");
 	SDL_Delay(1000);
 }//---
-
 
 // ======================================================= 
 void Game::closeSDL() // Clear Memory and exit SDL
@@ -173,4 +145,10 @@ void Game::closeSDL() // Clear Memory and exit SDL
 	std::cout << "\nSDL Closed \n";
 }//---
 
-// ============================================================ 
+// ======================================================= 
+Game::Game() // Constructor
+{
+	printf(" \n\n ----- Game Started ------ \n");
+}
+
+// ======================================================= 

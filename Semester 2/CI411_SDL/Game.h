@@ -10,6 +10,7 @@
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 600
 #define SPRITE_SIZE 32
+#define SPRITE_SCREEN_SIZE 32
 #define FPS 50
 
 
@@ -23,7 +24,7 @@ public:
 	void welcomeScreen();
 	void createGameObjects();
 	void handleEvents();
-	void update();
+	void update(float frametime);
 	void render();
 	void closeSDL();
 	void exitScreen();
@@ -36,3 +37,12 @@ private:
 	SDL_Window* gameWindow = nullptr;	
 };
 
+// =======================================================
+struct GameInput
+{
+	int mouseX = 0, mouseY = 0;
+	bool mouseL = false, mouseR = false;
+	bool mouseUpL = false;
+	bool mouseWheelUp = false, mouseWheelDown = false;
+	int keyPressed = NULL;
+};

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 {
 	// Frame Limit Variables
 	const int frameDelay = 1000 / FPS;
-	Uint64 frameStart, frameTime;
+	Uint64 frameStart, frameTime = 0.02F;
 
 	// Create the Game Object
 	game = new Game;
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 		frameStart = SDL_GetTicks64();
 
 		game->handleEvents();
-		game->update();
+		game->update(frameTime);
 		game->render();
 
 		// Limit Frame Rate
