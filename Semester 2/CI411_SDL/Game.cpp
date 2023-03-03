@@ -39,8 +39,8 @@ void Game::createGameObjects()
 void Game::update(float frameTime)
 {
 	//Update PC
-	pc->movePCStep(playerInput.keyPressed);
-	//	pc->movePCSmooth(playerInput.keyPressed, frameTime);	
+	//pc->movePCStep(playerInput.keyPressed);
+	pc->movePCSmooth(playerInput.keyPressed, frameTime);	
 	pc->updatePC();
 
 	// NPCs

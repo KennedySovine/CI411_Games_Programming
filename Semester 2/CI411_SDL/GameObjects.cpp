@@ -108,8 +108,8 @@ void PlayerCharacter::updatePC()
 void PlayerCharacter::movePCStep(int keyPressed)
 {
 	// WSAD
-	if (keyPressed == 119) addY(-(SPRITE_SIZE * 2)); //w
-	if (keyPressed == 115) addY((SPRITE_SIZE * 2)); //S
+	if (keyPressed == 119) addY(-(SPRITE_SIZE)); //w
+	if (keyPressed == 115) addY((SPRITE_SIZE)); //S
 	if (keyPressed == 97) addX(-(SPRITE_SIZE * 2)); //A
 	if (keyPressed == 100) addX((SPRITE_SIZE * 2)); //D
 	
