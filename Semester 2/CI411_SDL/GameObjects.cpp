@@ -108,10 +108,16 @@ void PlayerCharacter::updatePC()
 void PlayerCharacter::movePCStep(int keyPressed)
 {
 	// WSAD
-	if (keyPressed == 119) addY(-SPRITE_SIZE); //w
-	if (keyPressed == 115) addY(SPRITE_SIZE); //S
-	if (keyPressed == 97) addX(-SPRITE_SIZE); //A
-	if (keyPressed == 100) addX(SPRITE_SIZE); //D
+	if (keyPressed == 119) addY(-(SPRITE_SIZE * 2)); //w
+	if (keyPressed == 115) addY((SPRITE_SIZE * 2)); //S
+	if (keyPressed == 97) addX(-(SPRITE_SIZE * 2)); //A
+	if (keyPressed == 100) addX((SPRITE_SIZE * 2)); //D
+	
+	//Arrow Keys
+	if (keyPressed == 1073741906) addY(-(SPRITE_SIZE * 2)); //Up
+	if (keyPressed == 1073741905) addY((SPRITE_SIZE * 2)); //Down
+	if (keyPressed == 1073741904) addX(-(SPRITE_SIZE * 2)); //Left
+	if (keyPressed == 1073741903) addX((SPRITE_SIZE * 2)); //Right
 }///---
 
 void PlayerCharacter::movePCSmooth(int keyPressed, float frameTime)
@@ -121,6 +127,12 @@ void PlayerCharacter::movePCSmooth(int keyPressed, float frameTime)
 	if (keyPressed == 115) yVel += acceleration * frameTime;
 	if (keyPressed == 97)  xVel -= acceleration * frameTime;
 	if (keyPressed == 100) xVel += acceleration * frameTime;
+
+	//Arrow Keys /// Add Acceleration
+	if (keyPressed == 1073741906) yVel -= acceleration * frameTime;
+	if (keyPressed == 1073741905) yVel += acceleration * frameTime;
+	if (keyPressed == 1073741904) xVel -= acceleration * frameTime;
+	if (keyPressed == 1073741903) xVel += acceleration * frameTime;
 
 	// apply drag
 	if (abs(xVel) > 0.1f) xVel *= drag; else xVel = 0;
