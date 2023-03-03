@@ -1,5 +1,4 @@
-﻿  Game.cpp
-  GameObjects.cpp
+﻿  GameObjects.cpp
 C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(14,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(15,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(29,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
@@ -12,5 +11,4 @@ C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI41
 C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(88,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(104,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(105,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-  Generating Code...
-LINK : fatal error LNK1168: cannot open C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\x64\Debug\CI411_SDL.exe for writing
+  CI411_SDL.vcxproj -> C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\x64\Debug\CI411_SDL.exe

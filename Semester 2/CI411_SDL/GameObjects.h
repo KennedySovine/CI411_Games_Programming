@@ -50,7 +50,10 @@ private:
 
 class NPC :GameObject {
 public:
-	
+	void moveNPCSmooth(float frameTime);
+	void screenLimit();
+	void screenWrap();
 private:
-
+	float drag = .99F;
+	float acceleration = 1.5;
 };

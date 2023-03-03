@@ -147,6 +147,10 @@ void PlayerCharacter::movePCSmooth(int keyPressed, float frameTime)
 	screenWrap();
 }//---
 
+void NPC::moveNPCSmooth(float frameTime) {
+	addX(SPRITE_SIZE * frameTime);
+}
+
 void PlayerCharacter::screenLimit()
 {
 	// bounce of edges
@@ -156,7 +160,26 @@ void PlayerCharacter::screenLimit()
 	if (y < 0) yVel = -yVel;
 }//---
 
+void NPC::screenLimit()
+{
+	// bounce of edges
+	if (x > SCREEN_WIDTH - SPRITE_SIZE)  xVel = -xVel;
+	if (x < 0) xVel = -xVel;
+	if (y > SCREEN_HEIGHT - SPRITE_SIZE) yVel = -yVel;
+	if (y < 0) yVel = -yVel;
+}//---
+
+
 void PlayerCharacter::screenWrap()
+{
+	// Screen Wrap to opposite side if sprite leaves screen
+	if (x > SCREEN_WIDTH - SPRITE_SIZE)  x = 0;
+	if (x < 0) x = SCREEN_WIDTH - SPRITE_SIZE;
+	if (y > SCREEN_HEIGHT - SPRITE_SIZE) y = 0;
+	if (y < 0) y = SCREEN_HEIGHT - SPRITE_SIZE;
+}//---
+
+void NPC::screenWrap()
 {
 	// Screen Wrap to opposite side if sprite leaves screen
 	if (x > SCREEN_WIDTH - SPRITE_SIZE)  x = 0;
