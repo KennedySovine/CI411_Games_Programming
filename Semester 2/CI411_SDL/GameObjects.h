@@ -15,6 +15,13 @@ public:
 	void setAlive(bool state) { isActive = state; }
 	void addX(float xAmount) { x+= xAmount; }
 	void addY(float yAmount) { y+= yAmount; }		
+	void Loadtexture(const char* spriteFileName );
+	void screenLimit();
+	void screenBounce();
+	void screenWrap();
+
+	float getX() { return x; }
+	float getY() { return y; }
 
 protected: // derived classes can access
 	bool isActive = false;
@@ -33,27 +40,34 @@ protected: // derived classes can access
 class PlayerCharacter:GameObject
 {
 public:
-	PlayerCharacter(const char* spriteFileName, int xPos, int yPos);
-	void updatePC();
+	PlayerCharacter(const char* spriteFileName, int xPos, int yPos, float rotation );
+	void updatePC(int keyPressed, float frameTime);
 	void renderPC();
-	void movePCStep(int keyPressed);
-	void movePCSmooth(int keypressed, float frameTime);
-	void screenLimit();
-	void screenWrap();
-
+	void stepMove(int keyPressed);
+	void smoothMove(int keyPressed, float frameTime);
+	void rotateMove(int keyPressed, float frameTime);
+	float getX() { return x; }
+	float getY() { return y; }
 private:	
 	float drag = 0.99F;
-	float acceleration = 1;
+	float acceleration = 50;
+	int rotationSpeed = 360;
 };
 
 // =======================================================
 
 class NPC :GameObject {
 public:
-	void moveNPCSmooth(float frameTime);
-	void screenLimit();
-	void screenWrap();
+	NPC(const char* spriteFileName, int xPos, int yPos, float rotation);
+	void renderNPC();
+	void updateNPC();
+	void setAlive(bool state) { isActive = state; }
+	bool getAliveState() { return isActive; }
+	void roam(float frameTime);
+	void chasePC(float pcX, float pcY);
+	void setSpeed(float newSpeed) { speed = newSpeed; }
+
 private:
-	float drag = .99F;
-	float acceleration = 1.5;
+	float drag = 0.99F;
+	float acceleration = 50;
 };

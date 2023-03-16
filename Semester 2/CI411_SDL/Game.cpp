@@ -11,59 +11,116 @@ GameInput playerInput;
 // Game Objects
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
-GameObject* npcs[5] = {};
+GameObject* items[5] = {};
+NPC* npcs[5] = {};
+
 
 
 // ======================================================= 
 void Game::createGameObjects()
 {
-	printf("\n creating Game Objects");
+	printf("\nCreating Game Objects");
 	// Create Background
 	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
 	backGround->setSize(800, 600); // as not a standard sprite size
 
-	// Create Game Objects - filename , start  x and y position
-	pc = new PlayerCharacter("assets/images/Star_Blue.png", 64, 64);
+	// Create Game Objects - filename , x and y pos, initial angle
+	pc = new PlayerCharacter("assets/images/Pawn_Blue.png", 64, 64, 0);
 
-	// Create thg Array of NPCs
+	// Create an Array of NPCs
 	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
 	{
-		int xPos = 320 + i * SPRITE_SIZE;
+		int xPos = 320 + i * SPRITE_SIZE * 2;
+		int yPos = 320;
+		npcs[i] = new NPC("assets/images/Pawn_Red.png", xPos, yPos, 0);
+		npcs[i]->setAlive(true);		
+	}	
+	
+	// Set Properties for individual npcs
+	npcs[2]->setSpeed(48);
+	npcs[3]->setSpeed(96);
+
+
+	// Create the Array of items
+	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
+	{
+		int xPos = 320 + i * SPRITE_SIZE * 2;
 		int yPos = 480;
-		npcs[i] = new GameObject("assets/images/Star_Yellow.png", xPos, yPos);
-		npcs[i]->setAlive(true);
+		items[i] = new GameObject("assets/images/Star_Yellow.png", xPos, yPos);
+		items[i]->setAlive(true);
 	}
 }//----
+
+
+void Game::checkCollision()
+{
+	// Check if PC hit items
+	SDL_Rect objectRect = {-100,-100, SPRITE_SIZE, SPRITE_SIZE};
+	SDL_Rect pcRect = { pc->getX(), pc->getY(), SPRITE_SIZE, SPRITE_SIZE};
+
+	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
+	{
+		// Only check Alive Items
+		if (items[i]->getAliveState() == true)
+		{	
+			objectRect.x = items[i]->getX();
+			objectRect.y = items[i]->getY();
+
+			if (SDL_HasIntersection(&pcRect, &objectRect) )
+			{
+				items[i]->setAlive(false); // Disable the item hit
+			}
+		}
+	}
+
+}//---
+
+
 
 // ======================================================= 
 void Game::update(float frameTime)
 {
-	//Update PC
-	//pc->movePCStep(playerInput.keyPressed);
-	pc->movePCSmooth(playerInput.keyPressed, frameTime);	
-	pc->updatePC();
+	// Ensure Frame rate is at the delay speed and convert to deltaTime
+	if (frameTime < 1000 * (float)1 / FPS) frameTime = (float)1 / FPS;		
+	
+	pc->updatePC(playerInput.keyPressed, frameTime);
 
 	// NPCs
-	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
+	npcs[1]->chasePC(pc->getX(), pc->getY());
+	npcs[2]->roam(frameTime);
+	npcs[3]->roam(frameTime);
+
+	for (NPC* npc : npcs) // Update NPCs
 	{
-		npcs[i]->update();
+		if (npc->getAliveState()) npc->updateNPC();
 	}
 
+	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++) // Update Items
+	{
+		if (items[i]->getAliveState() == true) items[i]->update();
+	}
+
+	checkCollision();
 }//---
 
 // ======================================================= 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-	// render Objects
+		
 	backGround->render();	
-	pc->renderPC();
-	
-	// Render All NPCs
-	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
+
+	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
 	{
-		if (npcs[i]->getAliveState() == true)  npcs[i]->render();
+		if (items[i]->getAliveState() == true)  items[i]->render();
 	}
+
+	for (NPC* npc : npcs)
+	{
+		if(npc->getAliveState()) npc->renderNPC();
+	}
+	
+	pc->renderPC();
 
 	// Update the screen
 	SDL_RenderPresent(renderer);
@@ -85,7 +142,7 @@ void Game::handleEvents()
 		break;
 
 	case SDL_KEYDOWN:
-		std::cout << "\n" << playerInputEvent.key.keysym.sym;
+		//std::cout << "\n" << playerInputEvent.key.keysym.sym;
 		playerInput.keyPressed = playerInputEvent.key.keysym.sym;
 		break;
 
@@ -126,7 +183,7 @@ void Game::welcomeScreen()
 	splashScreen->setSize(800, 600);
 	splashScreen->render();
 	SDL_RenderPresent(renderer);
-	SDL_Delay(2000);
+	SDL_Delay(500);
 }//---
 
 // ======================================================= 

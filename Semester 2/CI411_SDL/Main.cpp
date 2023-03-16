@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 {
 	// Frame Limit Variables
 	const int frameDelay = 1000 / FPS;
-	Uint64 frameStart, frameTime = 0.02F;
+	Uint64 frameStart = 0, frameTime = 20;
 
 	// Create the Game Object
 	game = new Game;

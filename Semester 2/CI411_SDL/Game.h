@@ -10,7 +10,6 @@
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 600
 #define SPRITE_SIZE 32
-#define SPRITE_SCREEN_SIZE 32
 #define FPS 50
 
 
@@ -24,6 +23,7 @@ public:
 	void welcomeScreen();
 	void createGameObjects();
 	void handleEvents();
+	void checkCollision();
 	void update(float frametime);
 	void render();
 	void closeSDL();
