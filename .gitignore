@@ -5,3 +5,9 @@
 *.ipch
 Semester 2/CI411_SDL/.vs/CI411_SDL/v17/ipch/AutoPCH/7bc73eeaf1cae925/GAME.ipch
 Semester 2/CI411_SDL/.vs/CI411_SDL/v17/ipch/AutoPCH/9915c248d01ef859/GAMEOBJECTS.ipch
+*.vsidx
+*.db
+*.tlog
+Semester 2/CI411_SDL/x64/Debug/CI411_SDL.tlog/unsuccessfulbuild
+*.enc
+*.idb
