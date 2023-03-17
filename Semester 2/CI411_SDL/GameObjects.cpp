@@ -2,7 +2,6 @@
 // Libraries / Headers to include 
 #include "GameObjects.h"
 
-
 // ======================================================= 
 GameObject::GameObject()
 {	// default Constructor; 
@@ -21,33 +20,14 @@ void GameObject::Loadtexture(const char* spriteFileName)
 // ======================================================= 
 
 GameObject::GameObject(const char* spriteFileName, int xPos, int yPos)
-{
-	// Load Image from File
-	Loadtexture(spriteFileName);
-	//Set the Sprite starting Screen Postion
+{	
+	Loadtexture(spriteFileName);	// Load Image from File
 	x = xPos; 	y = yPos;
-	// Which part of the file to display
 	srcRect.h = srcRect.w = SPRITE_SIZE;
 	srcRect.x = srcRect.y = 0;
-	// Where to display the Sprite
 	destRect.h = destRect.w = SPRITE_SIZE;
 	destRect.x = (int)x;	destRect.y = (int)y;
-}
-//Bullet game object
-GameObject::GameObject(const char* spriteFileName, int xPos, int yPos, int anglePos)
-{
-	// Load Image from File
-	Loadtexture(spriteFileName);
-	//Set the Sprite starting Screen Postion
-	x = xPos; 	y = yPos; angle = anglePos;
-	// Which part of the file to display
-	srcRect.h = srcRect.w = SPRITE_SIZE;
-	srcRect.x = srcRect.y = 0;
-	// Where to display the Sprite
-	destRect.h = destRect.w = SPRITE_SIZE;
-	destRect.x = (int)x;	destRect.y = (int)y;
-}
-//---
+}//---
 
 // ======================================================= 
 bool GameObject::getAliveState()
@@ -84,6 +64,18 @@ void GameObject::render()
 
 // ======================================================= 
 
+void GameObject:: disableOffScreen()
+{
+	// disable if sprite leave the screen area
+	if (x > SCREEN_WIDTH || x < 0 || y > SCREEN_HEIGHT || y < 0)
+	{
+		isActive = false;
+	}
+
+}//---
+
+
+
 void GameObject::screenLimit()
 {
 	// Limit to edges
@@ -91,13 +83,13 @@ void GameObject::screenLimit()
 	if (x > SCREEN_WIDTH - SPRITE_SIZE)
 	{
 		stopMoving = true;
-		x = SCREEN_WIDTH - SPRITE_SIZE; 		
+		x = SCREEN_WIDTH - SPRITE_SIZE;
 	}
 	if (x < 0)
 	{
 		stopMoving = true;
 		x = 0;
-	}	
+	}
 	if (y > SCREEN_HEIGHT - SPRITE_SIZE)
 	{
 		stopMoving = true;
@@ -105,9 +97,9 @@ void GameObject::screenLimit()
 	}
 	if (y < 0)
 	{
-		stopMoving = true;		
+		stopMoving = true;
 		y = 0;
-	}	
+	}
 
 	if (stopMoving)
 	{
@@ -136,20 +128,80 @@ void GameObject::screenWrap()
 
 
 // ======================================================= 
+// Projectile Object
+// ======================================================= 
+
+
+Projectile::Projectile(const char* spriteFileName, int xPos, int yPos, float rotation, float spriteSize)
+{
+	Loadtexture(spriteFileName);	// Load Image from File
+	bulletSize = spriteSize;
+	x = xPos; 	y = yPos;
+	angle = rotation;
+	srcRect.h = srcRect.w = bulletSize;
+	srcRect.x = srcRect.y = 0;
+	destRect.h = destRect.w = bulletSize;
+}//---
+
+void Projectile::fire(float xSent, float ySent, float angleSent)
+{
+	if (!isActive)
+	{
+		isActive = true;
+		x = xSent + SPRITE_SIZE/2; // center the bullet
+		y = ySent + SPRITE_SIZE/2;
+		angle = angleSent;
+		xVel = sin(angle * M_PI / 180) * speed;
+		yVel = -cos(angle * M_PI / 180) * speed;
+	}
+}//---
+
+
+void Projectile::fireAtTarget(float startX, float startY, float targetX, float targetY)
+{
+	if (!isActive)
+	{
+		isActive = true;
+		x = startX + SPRITE_SIZE / 2;
+		y = startY + SPRITE_SIZE / 2;
+		angle = atan2(targetX - x, targetY - y);
+		xVel = sin(angle) * speed;
+		yVel = cos(angle) * speed;
+	}
+}//---
+
+
+void Projectile::renderProjectile()
+{		
+		SDL_RenderCopyEx(Game::renderer, spriteTexture, &srcRect, &destRect, angle, NULL, SDL_FLIP_NONE);
+}//---
+
+
+void Projectile::update(float frameTime)
+{
+	// Update Velocity
+	x += xVel * frameTime;
+	y += yVel * frameTime;
+
+	disableOffScreen();
+
+	//update Drawing Position Rect
+	destRect.x = (int)x;
+	destRect.y = (int)y;
+}//---
+
+
+// ======================================================= 
 // PC Object 
 // ======================================================= 
 
 PlayerCharacter::PlayerCharacter(const char* spriteFileName, int xPos, int yPos, float rotation)
 {
-	// Load Image from File
-	Loadtexture(spriteFileName);
-	//Set the Sprite starting Screen Postion
+	Loadtexture(spriteFileName);	// Load Image from File
 	x = xPos; 	y = yPos;
 	angle = rotation;
-	// Which part of the file to display
 	srcRect.h = srcRect.w = SPRITE_SIZE;
 	srcRect.x = srcRect.y = 0;
-	// Where to display the Sprite
 	destRect.h = destRect.w = SPRITE_SIZE;
 	destRect.x = (int)x; destRect.y = (int)y;
 }//----
@@ -181,36 +233,35 @@ void PlayerCharacter::rotateMove(int keyPressed, float frameTime)
 	// Rotate PC
 	if (keyPressed == 97) angle -= rotationSpeed * frameTime;
 	if (keyPressed == 100) angle += rotationSpeed * frameTime;
-		
-	if (keyPressed == 119) // W  - Move Forward
+	// Cursor Strafe
+	if (keyPressed == 1073741904) xVel -= acceleration * frameTime;
+	if (keyPressed == 1073741903) xVel += acceleration * frameTime;
+
+	if (keyPressed == 119 || keyPressed == 1073741906) // W  - Move Forward
 	{
 		xVel += sin(angle * M_PI / 180) * acceleration * frameTime;
 		yVel -= cos(angle * M_PI / 180) * acceleration * frameTime;
 	}
-	if (keyPressed == 115) // S	  - Back
+	if (keyPressed == 115 || keyPressed == 1073741905) // S	  - Back
 	{
 		xVel -= sin(angle * M_PI / 180) * acceleration * frameTime;
 		yVel += cos(angle * M_PI / 180) * acceleration * frameTime;
 	}
-
 	// Limit Speed
 	if (xVel > speed) xVel = speed;
 	if (yVel > speed) yVel = speed;
 	if (xVel < -speed) xVel = -speed;
 	if (yVel < -speed) yVel = -speed;
-
 	// apply drag
 	if (abs(xVel) > 0.3f) xVel *= drag; else xVel = 0;
 	if (abs(yVel) > 0.3f) yVel *= drag; else yVel = 0;
-
 	// Update positions
 	x += xVel;
 	y += yVel;
-
-	// Limit Movement
-	//screenLimit();
+	// Limit Movement	
 	screenWrap();
 	//screenBounce();
+	//screenLimit();
 }//---
 
 // ======================================================= 
@@ -257,15 +308,11 @@ void PlayerCharacter::smoothMove(int keyPressed, float frameTime)
 
 NPC::NPC(const char* spriteFileName, int xPos, int yPos, float rotation)
 {
-	// Load Image from File
 	Loadtexture(spriteFileName);
-	//Set the Sprite starting Screen Postion
 	x = xPos; 	y = yPos;
 	angle = rotation;
-	// Which part of the file to display
 	srcRect.h = srcRect.w = SPRITE_SIZE;
 	srcRect.x = srcRect.y = 0;
-	// Where to display the Sprite
 	destRect.h = destRect.w = SPRITE_SIZE;
 	destRect.x = (int)x; destRect.y = (int)y;
 }//----
@@ -290,21 +337,14 @@ void NPC::chasePC(float pcX, float pcY)
 	if (x > pcX) x--;
 	if (x < pcX) x++;
 	if (y > pcY) y--;
-	if (y < pcY) y++;	
+	if (y < pcY) y++;
 }//---
-
-void NPC::fleePC(float pcX, float pcY) {
-	if (x > pcX) x++;
-	if (x < pcX) x--;
-	if (y > pcY) y++;
-	if (y < pcY) y--;
-}
 
 
 void NPC::roam(float frameTime)
 {
 	// Move Forward
-	xVel = sin(angle * M_PI / 180) * speed * frameTime ;
+	xVel = sin(angle * M_PI / 180) * speed * frameTime;
 	yVel = -cos(angle * M_PI / 180) * speed * frameTime;
 
 	// Randomise direction if NPC reach edges
@@ -318,6 +358,50 @@ void NPC::roam(float frameTime)
 	// Update positions
 	x += xVel;
 	y += yVel;
+}//---
+
+
+
+void NPC::screenCrawl(float frameTime)
+{
+	if (xVel == 0) // Set some motion is the object is still
+	{
+		xVel = speed;
+		yVel = -1;
+	}
+
+	if (x > SCREEN_WIDTH - SPRITE_SIZE) // hit RHS
+	{
+		x = SCREEN_WIDTH - SPRITE_SIZE;
+		if (yVel < 0)
+			y += SPRITE_SIZE;
+		else
+			y -= SPRITE_SIZE;
+		xVel = -xVel;
+	}
+	if (x < 0) // hit LHS
+	{
+		x = 0;
+		if (yVel < 0)
+			y += SPRITE_SIZE;
+		else
+			y -= SPRITE_SIZE;
+		xVel = -xVel;
+	}
+
+	if (y > SCREEN_HEIGHT - SPRITE_SIZE) // hit bottom of Screen
+	{
+		y = 512;
+		yVel = -yVel;
+	}
+
+	if (y < 0)// hit top of Screen
+	{
+		y = 0;
+		yVel = -yVel;
+	}
+	
+	x += xVel * frameTime;
 }//---
 
 

@@ -11,10 +11,9 @@ GameInput playerInput;
 // Game Objects
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
-GameObject* items[5] = {};
-NPC* npcs[10] = {};
-GameObject* bullets[5] = {};
-
+GameObject* items[7] = {};
+NPC* npcs[12] = {};
+Projectile* bulletsPC[10] = {};
 
 
 // ======================================================= 
@@ -26,127 +25,158 @@ void Game::createGameObjects()
 	backGround->setSize(800, 600); // as not a standard sprite size
 
 	// Create Game Objects - filename , x and y pos, initial angle
-	pc = new PlayerCharacter("assets/images/Pawn_Blue.png", 64, 64, 0);
+	pc = new PlayerCharacter("assets/images/Pawn_Blue.png", 320, 520, 0);
+
 
 	// Create an Array of NPCs
 	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
 	{
-		int random = 0;
-		int xPos;
-		int yPos;
-		if (i > 6) {
-			random = std::rand() % 320;
-			xPos = random + i + SPRITE_SIZE * 2;
-			random = std::rand() % 320;
-			yPos = random;
-		}
-		else {
-			xPos = 320 + i * SPRITE_SIZE * 2;
-			yPos = 320;
-		}
-		npcs[i] = new NPC("assets/images/Pawn_Red.png", xPos, yPos, 0);
-		npcs[i]->setAlive(true);		
-	}	
-	
+		int xPos = 32 + i * SPRITE_SIZE;
+		int yPos = 96;
+		npcs[i] = new NPC("assets/images/Circle_Red.png", xPos, yPos, 0);
+		npcs[i]->setAlive(true);
+		npcs[i]->setSpeed(256);
+	}
 	// Set Properties for individual npcs
-	npcs[2]->setSpeed(48);
-	npcs[3]->setSpeed(96);
-	npcs[4]->setSpeed(1000);
 
 
 	// Create the Array of items
 	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
 	{
-		int xPos = 320 + i * SPRITE_SIZE * 2;
-		int yPos = 480;
+		int xPos = 96 + i * SPRITE_SIZE * 3;
+		int yPos = 128;
 		items[i] = new GameObject("assets/images/Star_Yellow.png", xPos, yPos);
 		items[i]->setAlive(true);
 	}
 
-	// Create the bullet
-	for (int i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
-		bullets[i] = new GameObject("assets/images/Circle_8.png", pc->getX(), pc->getY(), 0);
+
+	//create PC bullets but do not enable
+	for (int i = 0; i < sizeof(bulletsPC) / sizeof(bulletsPC[0]); i++)
+	{
+		bulletsPC[i] = new Projectile("assets/images/Circle_8.png", -100, -100, 0, 8);;
+		bulletsPC[i]->setBulletSpeed(300);
 	}
+
 }//----
 
 
 void Game::checkCollision()
 {
-	// Check if PC hit items
-	SDL_Rect objectRect = {-100,-100, SPRITE_SIZE, SPRITE_SIZE};
-	SDL_Rect bulletRect = { -100,-100, SPRITE_SIZE, SPRITE_SIZE };
-	SDL_Rect pcRect = { pc->getX(), pc->getY(), SPRITE_SIZE, SPRITE_SIZE};
+	// Create the Rects for checking what collides
+	SDL_Rect pcRect = { pc->getX(), pc->getY(), SPRITE_SIZE, SPRITE_SIZE };
+	SDL_Rect objectRect = { -100,-100, SPRITE_SIZE, SPRITE_SIZE };
+	SDL_Rect npcRect = { -100,-100, SPRITE_SIZE, SPRITE_SIZE };
+	SDL_Rect bulletRect = { 0,0,0,0 };
 
-	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
+	// Check if PC hits items
+	for (GameObject* item : items)
 	{
 		// Only check Alive Items
-		if (items[i]->getAliveState() == true)
-		{	
-			objectRect.x = items[i]->getX();
-			objectRect.y = items[i]->getY();
+		if (item->getAliveState() == true)
+		{
+			objectRect.x = item->getX();
+			objectRect.y = item->getY();
 
-			if (SDL_HasIntersection(&pcRect, &objectRect) )
+			if (SDL_HasIntersection(&pcRect, &objectRect))
 			{
-				items[i]->setAlive(false); // Disable the item hit
+				item->setAlive(false); // Disable the item hit
 			}
 		}
 	}
 
-	//Check if PC hits NPC
-	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++) {
-		//Check alive NPCS
-		if (items[i]->getAliveState() == true) {
-			objectRect.x = npcs[i]->getX();
-			objectRect.y = npcs[i]->getY();
+	// check what alive NPCs hit
+	for (NPC* npc : npcs)
+	{
+		if (npc->getAliveState() == true)
+		{
+			npcRect.x = npc->getX(); // Update the rect
+			npcRect.y = npc->getY();
 
-			if (SDL_HasIntersection(&pcRect, &objectRect)) {
-				npcs[i]->setAlive(false); //disable NPC hit
+			for (Projectile* bullet : bulletsPC)  //  Bullets -----------------
+			{
+				if (bullet->getAliveState() == true)
+				{
+					bulletRect.x = bullet->getX(); // Update the rect
+					bulletRect.y = bullet->getY();
+					bulletRect.w = bulletRect.h = bullet->getSize();
+
+					if (SDL_HasIntersection(&npcRect, &bulletRect))
+					{
+						npc->setAlive(false); // Disable the NPC 
+						bullet->setAlive(false); // disable bullet
+					}
+				}
 			}
 		}
 	}
-
-	//Check if bullet hits NPC
-	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++) {
-		//Check alive NPCS
-		if (items[i]->getAliveState() == true) {
-			objectRect.x = npcs[i]->getX();
-			objectRect.y = npcs[i]->getY();
-
-			if (SDL_HasIntersection(&bulletRect, &objectRect)) {
-				npcs[i]->setAlive(false); //disable NPC hit
-			}
-		}
-	}
-
 
 }//---
+// ======================================================= 
 
+
+void Game::checkAttacks()
+{
+	if (playerInput.keyPressed == 32) // Space 
+	{
+		// find the first inactive bullet and enable it at the PC Position
+		for (Projectile* bullet : bulletsPC)
+		{
+			if (bullet->getAliveState() == false)
+			{	// fire in the direction the pc is facing
+				bullet->fire(pc->getX(), pc->getY(), pc->getAngle());	
+				break; // stop checking the array
+			}
+		}
+	}
+
+	if (playerInput.mouseL) //  L Mouse 
+	{
+		// find the first inactive bullet and enable it at the PC Position
+		for (Projectile* bullet : bulletsPC)
+		{
+			if (bullet->getAliveState() == false)
+			{	// fire at the mouse
+				bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
+				break; // stop checking the array
+			}
+		}
+	}
+}//---
 
 
 // ======================================================= 
 void Game::update(float frameTime)
 {
 	// Ensure Frame rate is at the delay speed and convert to deltaTime
-	if (frameTime < 1000 * (float)1 / FPS) frameTime = (float)1 / FPS;		
-	
+	if (frameTime < 1000 * (float)1 / FPS) frameTime = (float)1 / FPS;
+
 	pc->updatePC(playerInput.keyPressed, frameTime);
 
-	// NPCs
-	npcs[1]->chasePC(pc->getX(), pc->getY());
-	npcs[5]->fleePC(pc->getX(), pc->getY());
-	npcs[2]->roam(frameTime);
-	npcs[3]->roam(frameTime);
+	// Set NPC Behaviours
+	for (NPC* npc : npcs)
+	{
+		npc->screenCrawl(frameTime);
+	}
+
 
 	for (NPC* npc : npcs) // Update NPCs
 	{
 		if (npc->getAliveState()) npc->updateNPC();
 	}
 
-	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++) // Update Items
+
+	for (GameObject* item : items) // Update Items
 	{
-		if (items[i]->getAliveState() == true) items[i]->update();
+		if (item->getAliveState() == true) item->update();
 	}
 
+
+	for (Projectile* bullet : bulletsPC) //--------- New Bullet
+	{
+		bullet->update(frameTime);
+	}
+
+	checkAttacks();
 	checkCollision();
 }//---
 
@@ -154,23 +184,29 @@ void Game::update(float frameTime)
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-		
-	backGround->render();	
 
-	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
+	backGround->render();
+
+	for (GameObject* item : items)
 	{
-		if (items[i]->getAliveState() == true)  items[i]->render();
+		if (item->getAliveState() == true)  item->render();
 	}
+
 
 	for (NPC* npc : npcs)
 	{
-		if(npc->getAliveState()) npc->renderNPC();
+		if (npc->getAliveState()) npc->renderNPC();
 	}
-	
+
+
+	for (Projectile* bullet : bulletsPC) //--------- New Bullet
+	{
+		if (bullet->getAliveState()) bullet->renderProjectile();
+	}
+
 	pc->renderPC();
 
-	// Update the screen
-	SDL_RenderPresent(renderer);
+	SDL_RenderPresent(renderer); 	// Update the screen
 }//---
 
 // ======================================================= 
@@ -178,6 +214,8 @@ void Game::handleEvents()
 {
 	// Reset Inputs
 	playerInput.keyPressed = NULL;
+	playerInput.mouseL = false;
+	playerInput.mouseR = false;
 
 	//Check for Events
 	SDL_PollEvent(&playerInputEvent);
@@ -187,6 +225,16 @@ void Game::handleEvents()
 	case SDL_QUIT:
 		gameRunning = false;
 		break;
+
+	case SDL_MOUSEMOTION: //--------- New Input
+		int mouseXpos, mouseYpos;
+		SDL_GetMouseState(&mouseXpos, &mouseYpos);
+		playerInput.mouseX = mouseXpos;
+		playerInput.mouseY = mouseYpos;
+
+	case SDL_MOUSEBUTTONDOWN: //--------- New Input
+		if (playerInputEvent.button.button == SDL_BUTTON_LEFT) playerInput.mouseL = true;
+		if (playerInputEvent.button.button == SDL_BUTTON_RIGHT) playerInput.mouseR = true;
 
 	case SDL_KEYDOWN:
 		//std::cout << "\n" << playerInputEvent.key.keysym.sym;
@@ -204,15 +252,10 @@ void Game::startSDL(const char* title)
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
 		std::cout << "\nSDL Initialised  \n";
-
 		gameWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-
 		if (gameWindow) printf("\nGame Window Created ");
-
 		renderer = SDL_CreateRenderer(gameWindow, -1, 0);
-
 		if (renderer) printf("\nRenderer Created \n");
-
 		gameRunning = true;
 	}
 	else

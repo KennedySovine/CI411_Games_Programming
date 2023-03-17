@@ -8,7 +8,6 @@ class GameObject
 public:
 	GameObject();
 	GameObject(const char* spriteFileName, int xPos, int yPos);
-	GameObject(const char* spriteFileName, int xPos, int yPos, int anglePos);
 	void update();
 	void render();
 	void setSize(int width, int height);
@@ -20,6 +19,7 @@ public:
 	void screenLimit();
 	void screenBounce();
 	void screenWrap();
+	void disableOffScreen();
 
 	float getX() { return x; }
 	float getY() { return y; }
@@ -38,6 +38,35 @@ protected: // derived classes can access
 
 // =======================================================
 
+
+class Projectile :GameObject
+{
+public:
+	Projectile(const char* spriteFileName, int xPos, int yPos, float rotation, float spriteSize);
+
+	bool getAliveState() { return isActive; }
+	void setAlive(bool state) { isActive = state; }
+	void fire(float xSent, float ySent, float angleSent);
+	void fireAtTarget(float startX, float startY, float targetX, float targetY);
+
+	void update(float frameTime);
+	void renderProjectile();
+	void setBulletSpeed(float newSpeed) { speed = newSpeed; }
+	float getX() { return x; }
+	float getY() { return y; }
+	Uint32 getSize() { return bulletSize; }
+
+private:
+	Uint32 lastTimeActivated = 0;
+	Uint32 disableTime = 0;
+	Uint32  bulletSize = 0;
+	float damage =100, range = 20;
+};
+
+
+
+// =======================================================
+
 class PlayerCharacter:GameObject
 {
 public:
@@ -49,10 +78,11 @@ public:
 	void rotateMove(int keyPressed, float frameTime);
 	float getX() { return x; }
 	float getY() { return y; }
+	float getAngle() { return angle; }
 private:	
 	float drag = 0.99F;
-	float acceleration = 100;
-	int rotationSpeed = 720;
+	float acceleration = 50;
+	int rotationSpeed = 360;
 };
 
 // =======================================================
@@ -66,8 +96,8 @@ public:
 	bool getAliveState() { return isActive; }
 	void roam(float frameTime);
 	void chasePC(float pcX, float pcY);
-	void fleePC(float pcX, float pcY);
 	void setSpeed(float newSpeed) { speed = newSpeed; }
+	void screenCrawl(float frameTime);
 	float getX() { return x; }
 	float getY() { return y; }
 

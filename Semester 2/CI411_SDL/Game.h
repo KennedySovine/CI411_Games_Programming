@@ -24,6 +24,7 @@ public:
 	void createGameObjects();
 	void handleEvents();
 	void checkCollision();
+	void checkAttacks();
 	void update(float frametime);
 	void render();
 	void closeSDL();
