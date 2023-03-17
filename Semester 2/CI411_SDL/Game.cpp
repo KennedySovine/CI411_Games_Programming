@@ -12,7 +12,8 @@ GameInput playerInput;
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
 GameObject* items[5] = {};
-NPC* npcs[5] = {};
+NPC* npcs[10] = {};
+GameObject* bullets[5] = {};
 
 
 
@@ -30,8 +31,19 @@ void Game::createGameObjects()
 	// Create an Array of NPCs
 	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
 	{
-		int xPos = 320 + i * SPRITE_SIZE * 2;
-		int yPos = 320;
+		int random = 0;
+		int xPos;
+		int yPos;
+		if (i > 6) {
+			random = std::rand() % 320;
+			xPos = random + i + SPRITE_SIZE * 2;
+			random = std::rand() % 320;
+			yPos = random;
+		}
+		else {
+			xPos = 320 + i * SPRITE_SIZE * 2;
+			yPos = 320;
+		}
 		npcs[i] = new NPC("assets/images/Pawn_Red.png", xPos, yPos, 0);
 		npcs[i]->setAlive(true);		
 	}	
@@ -39,6 +51,7 @@ void Game::createGameObjects()
 	// Set Properties for individual npcs
 	npcs[2]->setSpeed(48);
 	npcs[3]->setSpeed(96);
+	npcs[4]->setSpeed(1000);
 
 
 	// Create the Array of items
@@ -49,6 +62,11 @@ void Game::createGameObjects()
 		items[i] = new GameObject("assets/images/Star_Yellow.png", xPos, yPos);
 		items[i]->setAlive(true);
 	}
+
+	// Create the bullet
+	for (int i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
+		bullets[i] = new GameObject("assets/images/Circle_8.png", pc->getX(), pc->getY(), 0);
+	}
 }//----
 
 
@@ -56,6 +74,7 @@ void Game::checkCollision()
 {
 	// Check if PC hit items
 	SDL_Rect objectRect = {-100,-100, SPRITE_SIZE, SPRITE_SIZE};
+	SDL_Rect bulletRect = { -100,-100, SPRITE_SIZE, SPRITE_SIZE };
 	SDL_Rect pcRect = { pc->getX(), pc->getY(), SPRITE_SIZE, SPRITE_SIZE};
 
 	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
@@ -73,6 +92,33 @@ void Game::checkCollision()
 		}
 	}
 
+	//Check if PC hits NPC
+	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++) {
+		//Check alive NPCS
+		if (items[i]->getAliveState() == true) {
+			objectRect.x = npcs[i]->getX();
+			objectRect.y = npcs[i]->getY();
+
+			if (SDL_HasIntersection(&pcRect, &objectRect)) {
+				npcs[i]->setAlive(false); //disable NPC hit
+			}
+		}
+	}
+
+	//Check if bullet hits NPC
+	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++) {
+		//Check alive NPCS
+		if (items[i]->getAliveState() == true) {
+			objectRect.x = npcs[i]->getX();
+			objectRect.y = npcs[i]->getY();
+
+			if (SDL_HasIntersection(&bulletRect, &objectRect)) {
+				npcs[i]->setAlive(false); //disable NPC hit
+			}
+		}
+	}
+
+
 }//---
 
 
@@ -87,6 +133,7 @@ void Game::update(float frameTime)
 
 	// NPCs
 	npcs[1]->chasePC(pc->getX(), pc->getY());
+	npcs[5]->fleePC(pc->getX(), pc->getY());
 	npcs[2]->roam(frameTime);
 	npcs[3]->roam(frameTime);
 

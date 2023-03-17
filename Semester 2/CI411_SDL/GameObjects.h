@@ -8,6 +8,7 @@ class GameObject
 public:
 	GameObject();
 	GameObject(const char* spriteFileName, int xPos, int yPos);
+	GameObject(const char* spriteFileName, int xPos, int yPos, int anglePos);
 	void update();
 	void render();
 	void setSize(int width, int height);
@@ -50,8 +51,8 @@ public:
 	float getY() { return y; }
 private:	
 	float drag = 0.99F;
-	float acceleration = 50;
-	int rotationSpeed = 360;
+	float acceleration = 100;
+	int rotationSpeed = 720;
 };
 
 // =======================================================
@@ -65,7 +66,10 @@ public:
 	bool getAliveState() { return isActive; }
 	void roam(float frameTime);
 	void chasePC(float pcX, float pcY);
+	void fleePC(float pcX, float pcY);
 	void setSpeed(float newSpeed) { speed = newSpeed; }
+	float getX() { return x; }
+	float getY() { return y; }
 
 private:
 	float drag = 0.99F;

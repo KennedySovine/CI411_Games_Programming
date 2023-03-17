@@ -32,7 +32,22 @@ GameObject::GameObject(const char* spriteFileName, int xPos, int yPos)
 	// Where to display the Sprite
 	destRect.h = destRect.w = SPRITE_SIZE;
 	destRect.x = (int)x;	destRect.y = (int)y;
-}//---
+}
+//Bullet game object
+GameObject::GameObject(const char* spriteFileName, int xPos, int yPos, int anglePos)
+{
+	// Load Image from File
+	Loadtexture(spriteFileName);
+	//Set the Sprite starting Screen Postion
+	x = xPos; 	y = yPos; angle = anglePos;
+	// Which part of the file to display
+	srcRect.h = srcRect.w = SPRITE_SIZE;
+	srcRect.x = srcRect.y = 0;
+	// Where to display the Sprite
+	destRect.h = destRect.w = SPRITE_SIZE;
+	destRect.x = (int)x;	destRect.y = (int)y;
+}
+//---
 
 // ======================================================= 
 bool GameObject::getAliveState()
@@ -277,6 +292,13 @@ void NPC::chasePC(float pcX, float pcY)
 	if (y > pcY) y--;
 	if (y < pcY) y++;	
 }//---
+
+void NPC::fleePC(float pcX, float pcY) {
+	if (x > pcX) x++;
+	if (x < pcX) x--;
+	if (y > pcY) y++;
+	if (y < pcY) y--;
+}
 
 
 void NPC::roam(float frameTime)
