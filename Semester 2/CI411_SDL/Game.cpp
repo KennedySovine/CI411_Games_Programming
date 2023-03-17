@@ -12,7 +12,7 @@ GameInput playerInput;
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
 GameObject* items[7] = {};
-NPC* npcs[12] = {};
+NPC* npcs[24] = {};
 Projectile* bulletsPC[10] = {};
 
 
@@ -31,11 +31,23 @@ void Game::createGameObjects()
 	// Create an Array of NPCs
 	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
 	{
+		int yPos;
 		int xPos = 32 + i * SPRITE_SIZE;
-		int yPos = 96;
+		if (i < 12) { //Standard
+			yPos = 96 - (SPRITE_SIZE * 2);
+		}
+		else { //Slow
+			yPos = 96;
+		}
 		npcs[i] = new NPC("assets/images/Circle_Red.png", xPos, yPos, 0);
 		npcs[i]->setAlive(true);
-		npcs[i]->setSpeed(256);
+		if (i < 12) { //Standard
+			npcs[i]->setSpeed(256 * .5);
+		}
+		else { //Slow
+			npcs[i]->setSpeed(256 * .25);
+			
+		}
 	}
 	// Set Properties for individual npcs
 
@@ -54,7 +66,7 @@ void Game::createGameObjects()
 	for (int i = 0; i < sizeof(bulletsPC) / sizeof(bulletsPC[0]); i++)
 	{
 		bulletsPC[i] = new Projectile("assets/images/Circle_8.png", -100, -100, 0, 8);;
-		bulletsPC[i]->setBulletSpeed(300);
+		bulletsPC[i]->setBulletSpeed(300 * 1.5);
 	}
 
 }//----
@@ -109,6 +121,7 @@ void Game::checkCollision()
 			}
 		}
 	}
+
 
 }//---
 // ======================================================= 
