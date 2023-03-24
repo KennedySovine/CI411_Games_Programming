@@ -83,7 +83,10 @@ public:
 	float getAngle() { return angle; }
 
 	float getHP() { return health; }
-	void changeHP(float hpChange) { health += hpChange; }
+	void changeHP(float hpChange) {
+		if (health + hpChange > 100) { health == 100; } 
+		else { health += hpChange; }
+	}
 private:	
 	float drag = 0.9F;
 	float acceleration = 500;

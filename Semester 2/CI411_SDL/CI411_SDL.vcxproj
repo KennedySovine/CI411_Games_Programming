@@ -80,8 +80,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\include;C:\Users\KIS16\OneDrive - University of Brighton\KIS16_Modules\CI411_Games_Programming\Semester 2\SDL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\lib\x64;C:\Users\KIS16\OneDrive - University of Brighton\KIS16_Modules\CI411_Games_Programming\Semester 2\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\include;C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\lib\x64;C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -1,14 +1,26 @@
-﻿  GameObjects.cpp
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(14,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(15,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(29,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(30,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(43,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(44,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(73,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(73,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(87,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(88,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(104,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\GameObjects.cpp(105,15): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-  CI411_SDL.vcxproj -> C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\CI411_SDL\x64\Debug\CI411_SDL.exe
+﻿  Game.cpp
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.h(87,41): warning C4553: '==': result of expression not used; did you intend '='?
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(83,30): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(83,30): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(83,42): warning C4838: conversion from 'float' to 'int' requires a narrowing conversion
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(83,42): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(93,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(94,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(111,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(112,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(127,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(128,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(143,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(144,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(150,33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(151,33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(192,81): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(192,61): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(203,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(282,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(283,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(284,26): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(301,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(302,20): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(303,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  CI411_SDL.vcxproj -> C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\x64\Debug\CI411_SDL.exe

@@ -11,7 +11,8 @@ GameInput playerInput;
 // Game Objects
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
-GameObject* items[5] = {};
+GameObject* items[10] = {};
+GameObject* damageItems[5] = {};
 NPC* npcs[10] = {};
 Projectile* bulletsPC[10] = {};
 Projectile* bulletsNPC[20] = {};
@@ -48,11 +49,19 @@ void Game::createGameObjects()
 		items[i]->setAlive(true);
 	}
 
+	for (int i = 0; i < sizeof(damageItems) / sizeof(damageItems[0]); i++)
+	{
+		int xPos = 96 + rand() & 700;
+		int yPos = 96 + rand() & 500;
+		damageItems[i] = new GameObject("assets/images/Star_Red.png", xPos, yPos);
+		damageItems[i]->setAlive(true);
+	}
+
 	//create PC bullets but do not enable
 	for (int i = 0; i < sizeof(bulletsPC) / sizeof(bulletsPC[0]); i++)
 	{
 		bulletsPC[i] = new Projectile("assets/images/Circle_8.png", -100, -100, 0, 8);
-		bulletsPC[i]->setBulletSpeed(300);
+		bulletsPC[i]->setBulletSpeed(350);
 		bulletsPC[i]->setDamage(35);
 	}
 
@@ -60,7 +69,7 @@ void Game::createGameObjects()
 	for (int i = 0; i < sizeof(bulletsNPC) / sizeof(bulletsNPC[0]); i++)
 	{
 		bulletsNPC[i] = new Projectile("assets/images/Circle_Red.png", -100, -100, 0, 8);
-		bulletsNPC[i]->setBulletSpeed(250);
+		bulletsNPC[i]->setBulletSpeed(300);
 		bulletsNPC[i]->setDamage(20);
 	}
 
@@ -106,6 +115,22 @@ void Game::checkCollision()
 			{
 				item->setAlive(false); // Disable the item hit
 				pc->changeHP(50);
+			}
+		}
+	}
+
+	for (GameObject* item : damageItems) // Pickups items
+	{
+		// Only check Alive Items
+		if (item->getAliveState() == true)
+		{
+			objectRect.x = item->getX();
+			objectRect.y = item->getY();
+
+			if (SDL_HasIntersection(&pcRect, &objectRect))
+			{
+				item->setAlive(false); // Disable the item hit
+				pc->changeHP(-20);
 			}
 		}
 	}
@@ -185,7 +210,7 @@ void Game::checkAttacks()
 						bullet->fireAtTarget(npc->getX(), npc->getY(), pc->getX(), pc->getY());
 
 						// Set Random shot time - Current time + 3s + random upto 7s
-						npc->setNextShotTime(SDL_GetTicks() + 3000 + rand() % 7000); 
+						npc->setNextShotTime(SDL_GetTicks() + 3000 + rand() % 5000); 
 						break; // stop checking the bullet array
 					}
 				}
@@ -208,13 +233,18 @@ void Game::update(float frameTime)
 	{
 		if (npc->getAliveState())
 		{
-			//npc->roam(frameTime);
-			npc->screenCrawl(frameTime);
+			npc->roam(frameTime);
+			//npc->screenCrawl(frameTime);
 			npc->updateNPC();
 		}
 	}
 
 	for (GameObject* item : items) // Update Items
+	{
+		if (item->getAliveState() == true) item->update();
+	}
+
+	for (GameObject* item : damageItems) // Update Damage Items
 	{
 		if (item->getAliveState() == true) item->update();
 	}
@@ -295,6 +325,11 @@ void Game::render()
 	backGround->render();
 
 	for (GameObject* item : items)
+	{
+		if (item->getAliveState() == true)  item->render();
+	}
+
+	for (GameObject* item : damageItems)
 	{
 		if (item->getAliveState() == true)  item->render();
 	}
