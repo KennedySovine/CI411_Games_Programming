@@ -6,6 +6,8 @@
 #include<SDL_Image.h>
 #include<SDL_ttf.h>
 #include<iostream>
+#include<string>
+
 
 // Constants
 #define SCREEN_WIDTH  800
@@ -27,6 +29,7 @@ public:
 	void checkCollision();
 	void checkAttacks();
 	void drawHPBars();
+	void updateGUI();
 	void update(float frametime);
 	void render();
 	void closeSDL();

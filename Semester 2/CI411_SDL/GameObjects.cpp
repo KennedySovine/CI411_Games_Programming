@@ -21,7 +21,7 @@ void GameObject::Loadtexture(const char* spriteFileName)
 // ======================================================= 
 
 GameObject::GameObject(const char* spriteFileName, int xPos, int yPos)
-{	
+{
 	Loadtexture(spriteFileName);	// Load Image from File
 	x = xPos; 	y = yPos;
 	srcRect.h = srcRect.w = SPRITE_SIZE;
@@ -65,7 +65,7 @@ void GameObject::render()
 
 // ======================================================= 
 
-void GameObject:: disableOffScreen()
+void GameObject::disableOffScreen()
 {
 	// disable if sprite leave the screen area
 	if (x > SCREEN_WIDTH || x < 0 || y > SCREEN_HEIGHT || y < 0)
@@ -157,8 +157,8 @@ void Projectile::fire(float xSent, float ySent, float angleSent)
 	if (!isActive)
 	{
 		isActive = true;
-		x = xSent + SPRITE_SIZE/2; // center the bullet
-		y = ySent + SPRITE_SIZE/2;
+		x = xSent + SPRITE_SIZE / 2; // center the bullet
+		y = ySent + SPRITE_SIZE / 2;
 		angle = angleSent;
 		xVel = sin(angle * M_PI / 180) * speed;
 		yVel = -cos(angle * M_PI / 180) * speed;
@@ -181,8 +181,8 @@ void Projectile::fireAtTarget(float startX, float startY, float targetX, float t
 
 
 void Projectile::renderProjectile()
-{		
-		SDL_RenderCopyEx(Game::renderer, spriteTexture, &srcRect, &destRect, angle, NULL, SDL_FLIP_NONE);
+{
+	SDL_RenderCopyEx(Game::renderer, spriteTexture, &srcRect, &destRect, angle, NULL, SDL_FLIP_NONE);
 }//---
 
 
@@ -227,6 +227,13 @@ void PlayerCharacter::renderPC()
 
 void PlayerCharacter::updatePC(int keyPressed, float frameTime)
 {
+	// Set old Position for Collision detection
+	oldX = x; oldY = y;
+
+	// Limit Health
+	if (health > maxHealth) health = maxHealth;	
+
+	// Apply the movement
 	rotateMove(keyPressed, frameTime);
 
 	//update Drawing Position Rect
@@ -261,15 +268,18 @@ void PlayerCharacter::rotateMove(int keyPressed, float frameTime)
 	if (yVel > speed) yVel = speed;
 	if (xVel < -speed) xVel = -speed;
 	if (yVel < -speed) yVel = -speed;
+
 	// apply drag
 	if (abs(xVel) > 0.3f) xVel *= drag; else xVel = 0;
 	if (abs(yVel) > 0.3f) yVel *= drag; else yVel = 0;
+
 	// Update positions
 	x += xVel;
 	y += yVel;
+
 	// Limit Movement	
-	screenWrap();
-	//screenBounce();
+	//screenWrap();
+	screenBounce();
 	//screenLimit();
 }//---
 
@@ -307,8 +317,8 @@ void PlayerCharacter::smoothMove(int keyPressed, float frameTime)
 	x += xVel;
 	y += yVel;
 
-	//	screenLimit();
-	screenWrap();
+	screenLimit();
+	//screenWrap();
 }//---
 
 // ======================================================= 
@@ -327,7 +337,7 @@ NPC::NPC(const char* spriteFileName, int xPos, int yPos, float rotation)
 }//----
 
 void NPC::renderNPC()
-{	
+{
 	// add the Sprite to the Render Image
 	SDL_RenderCopyEx(Game::renderer, spriteTexture, &srcRect, &destRect, angle, NULL, SDL_FLIP_NONE);
 
@@ -412,7 +422,7 @@ void NPC::screenCrawl(float frameTime)
 		y = 0;
 		yVel = -yVel;
 	}
-	
+
 	x += xVel * frameTime;
 }//---
 

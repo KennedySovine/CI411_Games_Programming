@@ -30,6 +30,7 @@ protected: // derived classes can access
 	float speed = 100;
 	float angle = 0;
 	float health = 100;
+	float maxHealth = 100;
 
 	SDL_Rect srcRect = { 0,0,0,0 };
 	SDL_Rect destRect = { 0,0,0,0 };
@@ -81,16 +82,23 @@ public:
 	float getX() { return x; }
 	float getY() { return y; }
 	float getAngle() { return angle; }
-
 	float getHP() { return health; }
-	void changeHP(float hpChange) {
-		if (health + hpChange > 100) { health == 100; } 
-		else { health += hpChange; }
-	}
+	void changeHP(float hpChange) { health += hpChange; }
+
+	float getVelX() { return xVel;}
+	float getVelY() { return yVel; }
+	void setVelX(float newXVel) { xVel = newXVel; }
+	void setVelY(float newYVel) { yVel = newYVel; }
+	void setX(float newX) { x = newX; }
+	void setY(float newY) { y = newY; }
+	float getOldX() { return oldX; }
+	float getOldY() { return oldY; }
+
 private:	
 	float drag = 0.9F;
-	float acceleration = 500;
+	float acceleration = 100;
 	int rotationSpeed = 360;
+	float oldX = 0, oldY = 0;
 };
 
 // =======================================================
