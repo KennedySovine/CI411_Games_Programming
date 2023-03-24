@@ -1,6 +1,7 @@
 // ======================================================= 
 // Libraries / Headers to include 
 #include "GameObjects.h"
+#include	"Game.h";
 
 // ======================================================= 
 GameObject::GameObject()
@@ -125,6 +126,14 @@ void GameObject::screenWrap()
 	if (y > SCREEN_HEIGHT - SPRITE_SIZE) y = 0;
 	if (y < 0) y = SCREEN_HEIGHT - SPRITE_SIZE;
 }//---
+
+
+
+
+
+
+
+
 
 
 // ======================================================= 
@@ -318,13 +327,16 @@ NPC::NPC(const char* spriteFileName, int xPos, int yPos, float rotation)
 }//----
 
 void NPC::renderNPC()
-{
+{	
 	// add the Sprite to the Render Image
 	SDL_RenderCopyEx(Game::renderer, spriteTexture, &srcRect, &destRect, angle, NULL, SDL_FLIP_NONE);
+
 }//---
 
 void NPC::updateNPC()
 {
+	if (health < 0) isActive = false;
+
 	//update Drawing Position Rect
 	destRect.x = (int)x;
 	destRect.y = (int)y;

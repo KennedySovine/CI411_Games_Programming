@@ -4,6 +4,7 @@
 // Libraries / Headers to include 
 #include <SDL.h>
 #include<SDL_Image.h>
+#include<SDL_ttf.h>
 #include<iostream>
 
 // Constants
@@ -25,6 +26,7 @@ public:
 	void handleEvents();
 	void checkCollision();
 	void checkAttacks();
+	void drawHPBars();
 	void update(float frametime);
 	void render();
 	void closeSDL();

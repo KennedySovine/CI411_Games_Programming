@@ -20,7 +20,6 @@ public:
 	void screenBounce();
 	void screenWrap();
 	void disableOffScreen();
-
 	float getX() { return x; }
 	float getY() { return y; }
 
@@ -28,8 +27,9 @@ protected: // derived classes can access
 	bool isActive = false;
 	float x = -100, y = -100;	 // off the screen by default
 	float xVel = 0, yVel = 0;
-	float speed = 6;
+	float speed = 100;
 	float angle = 0;
+	float health = 100;
 
 	SDL_Rect srcRect = { 0,0,0,0 };
 	SDL_Rect destRect = { 0,0,0,0 };
@@ -48,19 +48,21 @@ public:
 	void setAlive(bool state) { isActive = state; }
 	void fire(float xSent, float ySent, float angleSent);
 	void fireAtTarget(float startX, float startY, float targetX, float targetY);
-
 	void update(float frameTime);
 	void renderProjectile();
 	void setBulletSpeed(float newSpeed) { speed = newSpeed; }
 	float getX() { return x; }
 	float getY() { return y; }
+	float getDamage() { return damage; }
+	void setDamage(float newDamage) { damage = newDamage; }
 	Uint32 getSize() { return bulletSize; }
+	
 
 private:
 	Uint32 lastTimeActivated = 0;
 	Uint32 disableTime = 0;
 	Uint32  bulletSize = 0;
-	float damage =100, range = 20;
+	float damage = 30, range = 20;
 };
 
 
@@ -79,9 +81,12 @@ public:
 	float getX() { return x; }
 	float getY() { return y; }
 	float getAngle() { return angle; }
+
+	float getHP() { return health; }
+	void changeHP(float hpChange) { health += hpChange; }
 private:	
-	float drag = 0.99F;
-	float acceleration = 50;
+	float drag = 0.9F;
+	float acceleration = 500;
 	int rotationSpeed = 360;
 };
 
@@ -101,7 +106,13 @@ public:
 	float getX() { return x; }
 	float getY() { return y; }
 
+	float getHP() { return health; }
+	void changeHP(float hpChange) { health += hpChange; }
+	int getNextShotTime() { return nextShotTime; }
+	void setNextShotTime(int newTime) { nextShotTime = newTime; }
+
 private:
 	float drag = 0.99F;
 	float acceleration = 50;
+	int nextShotTime = 0;
 };
