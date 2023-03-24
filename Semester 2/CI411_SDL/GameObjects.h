@@ -57,6 +57,11 @@ public:
 	float getDamage() { return damage; }
 	void setDamage(float newDamage) { damage = newDamage; }
 	Uint32 getSize() { return bulletSize; }
+
+	float getVelX() { return xVel; }
+	float getVelY() { return yVel; }
+	void setVelX(float newXVel) { xVel = newXVel; }
+	void setVelY(float newYVel) { yVel = newYVel; }
 	
 
 private:
@@ -121,6 +126,13 @@ public:
 	void changeHP(float hpChange) { health += hpChange; }
 	int getNextShotTime() { return nextShotTime; }
 	void setNextShotTime(int newTime) { nextShotTime = newTime; }
+
+	float getVelX() { return xVel; }
+	float getVelY() { return yVel; }
+	void setVelX(float newXVel) { xVeld = newXVel; }
+	void setVelY(float newYVel) { yVel = newYVel; }
+
+	void setAngle(float newAngle) { angle = newAngle; }
 
 private:
 	float drag = 0.99F;

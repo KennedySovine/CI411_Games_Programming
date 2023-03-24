@@ -16,7 +16,7 @@ GameObject* items[5] = {};
 NPC* npcs[5] = {};
 Projectile* bulletsPC[10] = {};
 Projectile* bulletsNPC[20] = {};
-GameObject* terrainBlocks[20];
+GameObject* terrainBlocks[15];
 
 // Text
 // Gobal Text Variables
@@ -24,6 +24,7 @@ TTF_Font* font = nullptr;
 SDL_Color textColour = { 255, 255, 200 };
 SDL_Surface* textSurface = nullptr;
 SDL_Texture* textTexture = nullptr;
+int itemsLeft = 0;
 
 // ======================================================= 
 void Game::createGameObjects()
@@ -106,7 +107,7 @@ void Game::checkCollision()
 
 			if (SDL_HasIntersection(&pcNextRect, &objectRect))
 			{
-				// Stop the PC moveing and reposition it to not hitting the terrain
+				// Stop the PC moving and reposition it to not hitting the terrain
 				pc->setVelX(0);
 				pc->setVelY(0);
 				pc->setX(pc->getOldX());
@@ -118,7 +119,7 @@ void Game::checkCollision()
 
 	for (Projectile* bullet : bulletsNPC)  //  NPC Bullets -----------------
 	{
-		if (bullet->getAliveState() == true)
+		if (bullet->getAliveState())
 		{
 			bulletRect.x = bullet->getX(); // Update the rect
 			bulletRect.y = bullet->getY();
@@ -129,6 +130,48 @@ void Game::checkCollision()
 				//npc->setAlive(false); // Disable the NPC 							
 				pc->changeHP(-bullet->getDamage()); // Apply damage
 				bullet->setAlive(false); // disable bullet
+			}
+		}
+	}
+
+	//Disable NPC bullets when they hit the terrain
+	for (GameObject* block : terrainBlocks)  //  Terrain -----------------
+	{
+		for (Projectile* bullet : bulletsNPC)  //  NPC Bullets -----------------
+		{
+			if (block->getAliveState())
+			{
+				objectRect.x = block->getX();
+				objectRect.y = block->getY();
+
+				if (bullet->getAliveState()) {
+					bulletRect.x = bullet->getX(); // Update the rect
+					bulletRect.y = bullet->getY();
+					bulletRect.w = bulletRect.h = bullet->getSize();
+
+					if (SDL_HasIntersection(&bulletRect, &objectRect)) {
+						bullet->setAlive(false);
+					}
+				}
+
+
+			}
+		}
+	}
+
+	for (GameObject* block : terrainBlocks)  //  Terrain -----------------
+	{
+		objectRect.x = block->getX();
+		objectRect.y = block->getY();
+
+		for (NPC* npc : npcs)
+		{
+			npcRect.x = npc->getX(); // Update the rect
+			npcRect.y = npc->getY();
+			SDL_Rect npcNextRect = { npc->getX() + npc->getVelX(), npc->getY() + npc->getVelY(), SPRITE_SIZE, SPRITE_SIZE };
+			
+			if (SDL_HasIntersection(&objectRect, &npcNextRect)) {
+				npc->setAngle(rand() % 360 + 1);
 			}
 		}
 	}
@@ -262,6 +305,12 @@ void Game::update(float frameTime)
 		if (item->getAliveState() == true) item->update();
 	}
 
+	//Get how many items left
+	itemsLeft = 0;
+	for (GameObject* item : items) {
+		if (item->getAliveState() == true) itemsLeft++;
+	}
+
 	for (Projectile* bullet : bulletsPC) //--------- New Bullet
 	{
 		bullet->update(frameTime);
@@ -289,6 +338,7 @@ void Game::updateGUI()
 	// text to be on screen
 	screenText = "Health: " + std::to_string(int(pc->getHP()));
 	screenText += "\nTime: " + std::to_string(SDL_GetTicks64() / 1000);
+	screenText += "\nHealth Pickups Left: " + std::to_string(itemsLeft);
 
 	// render the text to screen
 	textSurface = TTF_RenderText_Blended_Wrapped(font, screenText.c_str(), textColour, 0);
@@ -449,7 +499,7 @@ void Game::startSDL(const char* title)
 
 		// Initialise Fonts
 		TTF_Init();
-		font = TTF_OpenFont("assets/fonts/arial.ttf", 22); // size is the last value
+		font = TTF_OpenFont("assets/fonts/data-latin.ttf", 20); // size is the last value
 	}
 	else
 	{
