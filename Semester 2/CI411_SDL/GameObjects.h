@@ -18,10 +18,12 @@ public:
 	void Loadtexture(const char* spriteFileName );
 	void screenLimit();
 	void screenBounce();
-	void screenWrap();
+	void screenWrap();	
 	void disableOffScreen();
 	float getX() { return x; }
 	float getY() { return y; }
+	void setX(float newX) { x = newX; }
+	void setY(float newY) { y = newY; }
 
 protected: // derived classes can access
 	bool isActive = false;
@@ -31,6 +33,7 @@ protected: // derived classes can access
 	float angle = 0;
 	float health = 100;
 	float maxHealth = 100;
+	float oldX = 0, oldY = 0;
 
 	SDL_Rect srcRect = { 0,0,0,0 };
 	SDL_Rect destRect = { 0,0,0,0 };
@@ -54,14 +57,10 @@ public:
 	void setBulletSpeed(float newSpeed) { speed = newSpeed; }
 	float getX() { return x; }
 	float getY() { return y; }
+
 	float getDamage() { return damage; }
 	void setDamage(float newDamage) { damage = newDamage; }
 	Uint32 getSize() { return bulletSize; }
-
-	float getVelX() { return xVel; }
-	float getVelY() { return yVel; }
-	void setVelX(float newXVel) { xVel = newXVel; }
-	void setVelY(float newYVel) { yVel = newYVel; }
 	
 
 private:
@@ -98,12 +97,13 @@ public:
 	void setY(float newY) { y = newY; }
 	float getOldX() { return oldX; }
 	float getOldY() { return oldY; }
+	void stop();
 
 private:	
 	float drag = 0.9F;
 	float acceleration = 100;
 	int rotationSpeed = 360;
-	float oldX = 0, oldY = 0;
+	
 };
 
 // =======================================================
@@ -121,18 +121,14 @@ public:
 	void screenCrawl(float frameTime);
 	float getX() { return x; }
 	float getY() { return y; }
+	void setX(float newX) { x = newX; }
+	void setY(float newY) { y = newY; }
 
 	float getHP() { return health; }
 	void changeHP(float hpChange) { health += hpChange; }
 	int getNextShotTime() { return nextShotTime; }
 	void setNextShotTime(int newTime) { nextShotTime = newTime; }
-
-	float getVelX() { return xVel; }
-	float getVelY() { return yVel; }
-	void setVelX(float newXVel) { xVeld = newXVel; }
-	void setVelY(float newYVel) { yVel = newYVel; }
-
-	void setAngle(float newAngle) { angle = newAngle; }
+	void changeDirection();
 
 private:
 	float drag = 0.99F;

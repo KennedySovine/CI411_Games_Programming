@@ -128,14 +128,6 @@ void GameObject::screenWrap()
 }//---
 
 
-
-
-
-
-
-
-
-
 // ======================================================= 
 // Projectile Object
 // ======================================================= 
@@ -321,6 +313,16 @@ void PlayerCharacter::smoothMove(int keyPressed, float frameTime)
 	//screenWrap();
 }//---
 
+
+void PlayerCharacter::stop()
+{
+	xVel = yVel = 0;
+	x = oldX;
+	y = oldY;
+}//--
+
+
+
 // ======================================================= 
 // NPC Objects 
 // ======================================================= 
@@ -354,6 +356,15 @@ void NPC::updateNPC()
 
 // ======================================================= 
 
+void NPC::changeDirection()
+{
+	angle = rand() % 360 + 1;
+	x = oldX;
+	y = oldY;
+
+}//---
+
+
 void NPC::chasePC(float pcX, float pcY)
 {
 	if (x > pcX) x--;
@@ -365,6 +376,9 @@ void NPC::chasePC(float pcX, float pcY)
 
 void NPC::roam(float frameTime)
 {
+	oldX = x;
+	oldY = y;
+
 	// Move Forward
 	xVel = sin(angle * M_PI / 180) * speed * frameTime;
 	yVel = -cos(angle * M_PI / 180) * speed * frameTime;

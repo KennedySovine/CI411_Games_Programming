@@ -1,6 +1,7 @@
 // Libraries / Headers to include 
 #include "Game.h"
 #include "GameObjects.h"
+#include"Level.h"
 
 
 // ======================================================= 
@@ -12,38 +13,39 @@ GameInput playerInput;
 // Game Objects
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
-GameObject* items[5] = {};
-NPC* npcs[5] = {};
+GameObject* items[3] = {};
+NPC* npcs[15] = {};
 Projectile* bulletsPC[10] = {};
 Projectile* bulletsNPC[20] = {};
-GameObject* terrainBlocks[15];
+GameObject* terrainBlocks[200];
+Levels* levelMaps = nullptr;
 
 // Text
 // Gobal Text Variables
 TTF_Font* font = nullptr;
+TTF_Font* font2 = nullptr;
 SDL_Color textColour = { 255, 255, 200 };
 SDL_Surface* textSurface = nullptr;
 SDL_Texture* textTexture = nullptr;
-int itemsLeft = 0;
 
 // ======================================================= 
 void Game::createGameObjects()
 {
+	// Create Level Object
+	levelMaps = new Levels;
+
 	printf("\nCreating Game Objects");
 	// Create Background
 	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
 	backGround->setSize(800, 600); // as not a standard sprite size
 
 	// Create Game Objects - filename , x and y pos, initial angle
-	pc = new PlayerCharacter("assets/images/Triangle_Purple.png", 320, 520, 0);
+	pc = new PlayerCharacter("assets/images/Pawn_Purple.png", 0, 0, 0);
 
 	// Create an Array of NPCs
 	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
 	{
-		int xPos = 32 + i * SPRITE_SIZE * 2;
-		int yPos = 96;
-		npcs[i] = new NPC("assets/images/Circle_Red.png", xPos, yPos, 0);
-		npcs[i]->setAlive(true);
+		npcs[i] = new NPC("assets/images/Circle_Red.png", 0, 0, 0);
 		npcs[i]->setSpeed(64);
 		npcs[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
 	}
@@ -51,10 +53,7 @@ void Game::createGameObjects()
 	// Create the Array of items
 	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
 	{
-		int xPos = 96 + rand() % 600;
-		int yPos = 96 + rand() % 400;
-		items[i] = new GameObject("assets/images/Star_Green.png", xPos, yPos);
-		items[i]->setAlive(true);
+		items[i] = new GameObject("assets/images/Star_Green.png", 0, 0);
 	}
 
 	//create PC bullets but do not enable
@@ -77,12 +76,73 @@ void Game::createGameObjects()
 	srand(time(NULL)); // seed the random number for variation
 	for (int i = 0; i < sizeof(terrainBlocks) / sizeof(terrainBlocks[0]); i++)
 	{
-		int xPos = (rand() % 19 + 1) * SPRITE_SIZE; // random positions for new tiles
-		int yPos = (rand() % 14 + 1) * SPRITE_SIZE;
-		terrainBlocks[i] = new GameObject("assets/images/Square_Cross_Grey.png", xPos, yPos);
-		terrainBlocks[i]->setAlive(true);
+		terrainBlocks[i] = new GameObject("assets/images/Square_Cross_Grey.png", 0, 0);
 	}
+	// Load Map  
+	loadMap(1);
 }//----
+
+
+void Game::loadMap(int levelNumber)
+{
+	std::cout << "\nLoading Level " << levelNumber;
+
+	for (int row = 0; row < 18; row++)
+	{
+		for (int col = 0; col < 25; col++)
+		{
+			if (levelMaps->getTileContent(levelNumber, col, row) == 1) //  Terrain 
+			{
+				for (GameObject* block : terrainBlocks)
+				{
+					if (block->getAliveState() == false)
+					{
+						block->setAlive(true);
+						block->setX(col * SPRITE_SIZE);
+						block->setY(row * SPRITE_SIZE);				
+						break;
+					}
+				}
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 2) // PC
+			{
+				pc->setX(col * SPRITE_SIZE);
+				pc->setY(row * SPRITE_SIZE);
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 3) //  NPC
+			{
+				for (NPC* npc : npcs)
+				{
+					if (npc->getAliveState() == false)
+					{
+						npc->setAlive(true);
+						npc->setX(col * SPRITE_SIZE);
+						npc->setY(row * SPRITE_SIZE);
+						break;
+					}
+				}
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 4) //  Items
+			{
+				for (GameObject* item : items)
+				{
+					if (item->getAliveState() == false)
+					{
+						item->setAlive(true);
+						item->setX(col * SPRITE_SIZE);
+						item->setY(row * SPRITE_SIZE);
+						break;
+					}
+				}
+			}
+		}
+	}
+}//---
+
+
 
 // ======================================================= 
 
@@ -97,7 +157,6 @@ void Game::checkCollision()
 	// Set the PC's next Position by adding velocity
 	SDL_Rect pcNextRect = { pc->getX() + pc->getVelX(), pc->getY() + pc->getVelY(), SPRITE_SIZE, SPRITE_SIZE };
 
-	// Check if PC hits:
 	for (GameObject* block : terrainBlocks)  //  Terrain -----------------
 	{
 		if (block->getAliveState())
@@ -105,13 +164,38 @@ void Game::checkCollision()
 			objectRect.x = block->getX();
 			objectRect.y = block->getY();
 
-			if (SDL_HasIntersection(&pcNextRect, &objectRect))
+			if (SDL_HasIntersection(&pcNextRect, &objectRect))  // PC -----
 			{
-				// Stop the PC moving and reposition it to not hitting the terrain
-				pc->setVelX(0);
-				pc->setVelY(0);
-				pc->setX(pc->getOldX());
-				pc->setY(pc->getOldY());
+				pc->stop(); // Stop the PC moving
+			}
+
+			for (NPC* npc : npcs) // NPCs ---------
+			{
+				if (npc->getAliveState() == true)
+				{
+					npcRect.x = npc->getX(); // Update the rect
+					npcRect.y = npc->getY();
+
+					if (SDL_HasIntersection(&npcRect, &objectRect))
+					{
+						npc->changeDirection();
+					}
+				}
+			}
+
+			for (Projectile* bullet : bulletsPC)  // PC  Bullets -----------------
+			{
+				if (bullet->getAliveState() == true)
+				{
+					bulletRect.x = bullet->getX(); // Update the rect
+					bulletRect.y = bullet->getY();
+					bulletRect.w = bulletRect.h = bullet->getSize();
+
+					if (SDL_HasIntersection(&objectRect, &bulletRect))
+					{
+						bullet->setAlive(false); // disable bullet
+					}
+				}
 			}
 		}
 	}
@@ -119,59 +203,30 @@ void Game::checkCollision()
 
 	for (Projectile* bullet : bulletsNPC)  //  NPC Bullets -----------------
 	{
-		if (bullet->getAliveState())
+		if (bullet->getAliveState() == true)
 		{
 			bulletRect.x = bullet->getX(); // Update the rect
 			bulletRect.y = bullet->getY();
 			bulletRect.w = bulletRect.h = bullet->getSize();
 
-			if (SDL_HasIntersection(&pcRect, &bulletRect))
+			if (SDL_HasIntersection(&pcRect, &bulletRect))  //  PC ------
 			{
-				//npc->setAlive(false); // Disable the NPC 							
 				pc->changeHP(-bullet->getDamage()); // Apply damage
 				bullet->setAlive(false); // disable bullet
 			}
-		}
-	}
 
-	//Disable NPC bullets when they hit the terrain
-	for (GameObject* block : terrainBlocks)  //  Terrain -----------------
-	{
-		for (Projectile* bullet : bulletsNPC)  //  NPC Bullets -----------------
-		{
-			if (block->getAliveState())
+			for (GameObject* block : terrainBlocks)  //  Terrain ------
 			{
-				objectRect.x = block->getX();
-				objectRect.y = block->getY();
+				if (block->getAliveState())
+				{
+					objectRect.x = block->getX();
+					objectRect.y = block->getY();
 
-				if (bullet->getAliveState()) {
-					bulletRect.x = bullet->getX(); // Update the rect
-					bulletRect.y = bullet->getY();
-					bulletRect.w = bulletRect.h = bullet->getSize();
-
-					if (SDL_HasIntersection(&bulletRect, &objectRect)) {
-						bullet->setAlive(false);
+					if (SDL_HasIntersection(&objectRect, &bulletRect))
+					{
+						bullet->setAlive(false); // disable bullet
 					}
 				}
-
-
-			}
-		}
-	}
-
-	for (GameObject* block : terrainBlocks)  //  Terrain -----------------
-	{
-		objectRect.x = block->getX();
-		objectRect.y = block->getY();
-
-		for (NPC* npc : npcs)
-		{
-			npcRect.x = npc->getX(); // Update the rect
-			npcRect.y = npc->getY();
-			SDL_Rect npcNextRect = { npc->getX() + npc->getVelX(), npc->getY() + npc->getVelY(), SPRITE_SIZE, SPRITE_SIZE };
-			
-			if (SDL_HasIntersection(&objectRect, &npcNextRect)) {
-				npc->setAngle(rand() % 360 + 1);
 			}
 		}
 	}
@@ -208,9 +263,9 @@ void Game::checkCollision()
 					bulletRect.y = bullet->getY();
 					bulletRect.w = bulletRect.h = bullet->getSize();
 
-					if (SDL_HasIntersection(&npcRect, &bulletRect))
+					if (SDL_HasIntersection(&npcRect, &bulletRect)) // NPC
 					{
-						//npc->setAlive(false); // Disable the NPC 							
+						//npc->setAlive(false); // Disable the NPC 						
 						npc->changeHP(-bullet->getDamage()); // Apply damage
 
 						bullet->setAlive(false); // disable bullet
@@ -282,6 +337,30 @@ void Game::checkAttacks()
 
 // ======================================================= 
 
+void Game::checkGameStates()
+{
+	activeItems = 0;
+	for (GameObject* item : items)
+	{
+		if (item->getAliveState()) activeItems++;
+	}
+
+	activeNPCs = 0;
+	for (NPC* npc : npcs)
+	{
+		if (npc->getAliveState()) activeNPCs++;
+	}
+
+	// Check if PC is alive
+	if (pc->getHP() < 0) gameRunning = false;
+
+}//---
+
+
+
+// ======================================================= 
+
+
 void Game::update(float frameTime)
 {
 	// Ensure Frame rate is at the delay speed and convert to deltaTime
@@ -295,56 +374,69 @@ void Game::update(float frameTime)
 		if (npc->getAliveState())
 		{
 			npc->roam(frameTime);
-			//npc->screenCrawl(frameTime);
 			npc->updateNPC();
+			//npc->screenCrawl(frameTime);		
 		}
 	}
+
+	for (GameObject* block : terrainBlocks)
+	{
+		if (block->getAliveState()) block->update();
+	}
+
 
 	for (GameObject* item : items) // Update Items
 	{
 		if (item->getAliveState() == true) item->update();
 	}
 
-	//Get how many items left
-	itemsLeft = 0;
-	for (GameObject* item : items) {
-		if (item->getAliveState() == true) itemsLeft++;
-	}
-
 	for (Projectile* bullet : bulletsPC) //--------- New Bullet
 	{
-		bullet->update(frameTime);
+		if (bullet->getAliveState()) bullet->update(frameTime);
 	}
 
 	for (Projectile* bullet : bulletsNPC) //--------- New Bullet
 	{
-		bullet->update(frameTime);
+		if (bullet->getAliveState()) bullet->update(frameTime);
 	}
 
 	checkAttacks();
 	checkCollision();
+	checkGameStates();
 
-	// Check if PC is alive
-	if (pc->getHP() < 0) gameRunning = false;
 }//---
 
 
 // =======================================================
 void Game::updateGUI()
 {
-	SDL_Rect textRect = { 64,8,0,0 }; // start position of the text
 	std::string  screenText;
+	SDL_Rect textRect = { 8,8,0,0 }; // start position of the text
 
-	// text to be on screen
-	screenText = "Health: " + std::to_string(int(pc->getHP()));
-	screenText += "\nTime: " + std::to_string(SDL_GetTicks64() / 1000);
-	screenText += "\nHealth Pickups Left: " + std::to_string(itemsLeft);
+	// text to be on screen Left Side	
+	screenText = "Items: " + std::to_string(activeItems);
+	screenText += "  NPCs: " + std::to_string(activeNPCs);
+	textColour = { 255, 255, 0 };
 
 	// render the text to screen
 	textSurface = TTF_RenderText_Blended_Wrapped(font, screenText.c_str(), textColour, 0);
 	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 	SDL_QueryTexture(textTexture, NULL, NULL, &textRect.w, &textRect.h);
 	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+
+	// text to be on screen Right Side
+	textRect = { 400,580,0,0 }; // start position of the text
+	screenText = "HP: " + std::to_string(int(pc->getHP()));
+	screenText += "      Time: " + std::to_string(SDL_GetTicks64() / 1000);
+	textColour = { 0, 255, 0 };
+
+	// render the text to screen
+	textSurface = TTF_RenderText_Blended_Wrapped(font2, screenText.c_str(), textColour, 0);
+	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_QueryTexture(textTexture, NULL, NULL, &textRect.w, &textRect.h);
+	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
 
 	// Clear the memory
 	SDL_FreeSurface(textSurface);
@@ -408,43 +500,30 @@ void Game::drawHPBars()
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-
 	backGround->render();
-
-
 	for (GameObject* block : terrainBlocks)
 	{
 		if (block->getAliveState() == true)  block->render();
 	}
-
-
 	for (GameObject* item : items)
 	{
 		if (item->getAliveState() == true)  item->render();
 	}
-
 	for (NPC* npc : npcs)
 	{
 		if (npc->getAliveState()) npc->renderNPC();
 	}
-
 	for (Projectile* bullet : bulletsPC)
 	{
 		if (bullet->getAliveState()) bullet->renderProjectile();
 	}
-
 	for (Projectile* bullet : bulletsNPC)
 	{
 		if (bullet->getAliveState()) bullet->renderProjectile();
 	}
-
-
 	pc->renderPC();
-
 	drawHPBars();
-
 	updateGUI();
-
 	SDL_RenderPresent(renderer); 	// Update the screen
 }//---
 
@@ -499,7 +578,8 @@ void Game::startSDL(const char* title)
 
 		// Initialise Fonts
 		TTF_Init();
-		font = TTF_OpenFont("assets/fonts/data-latin.ttf", 20); // size is the last value
+		font = TTF_OpenFont("assets/fonts/arial.ttf", 22); // size is the last value
+		font2 = TTF_OpenFont("assets/fonts/bubble_pixel-7_dark.ttf", 18); // size is the last value
 	}
 	else
 	{
@@ -543,6 +623,7 @@ void Game::closeSDL() // Clear Memory and exit SDL
 	SDL_DestroyWindow(gameWindow);
 	SDL_DestroyRenderer(renderer);
 	TTF_CloseFont(font);
+	TTF_CloseFont(font2);
 	TTF_Quit();
 	SDL_Quit();
 	std::cout << "\nSDL Closed \n";
