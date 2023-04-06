@@ -10,9 +10,9 @@
 
 
 // Constants
-#define SCREEN_WIDTH  800
-#define SCREEN_HEIGHT 600
-#define ROWS = 18
+#define SCREEN_WIDTH  1920
+#define SCREEN_HEIGHT 1080
+#define ROWS = 50
 #define COLUMNS = 25
 #define SPRITE_SIZE 32
 #define FPS 50
