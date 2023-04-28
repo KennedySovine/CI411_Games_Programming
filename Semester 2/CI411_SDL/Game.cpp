@@ -28,6 +28,8 @@ TTF_Font* font2 = nullptr;
 SDL_Color textColour = { 255, 255, 200 };
 SDL_Surface* textSurface = nullptr;
 SDL_Texture* textTexture = nullptr;
+int timeLevel = 0;
+int previousTime = 0;
 
 // ======================================================= 
 void Game::createGameObjects()
@@ -422,11 +424,21 @@ void Game::checkGameStates()
 		if (npc->getAliveState()) activeNPCs++;
 	}
 
+	timeLevel = (SDL_GetTicks64() / 1000) - previousTime;
+
 	// Check NPCs are cleared
 	//if (activeNPCs == 0) gameRunning = false;
 
 	// Check Items
-	if (activeItems == 0) gameRunning = false;
+	//if (activeItems == 0) gameRunning = false;
+
+	//NPCS and Items cleared
+	if (activeNPCs == 0 && activeItems == 0) gameRunning = false;
+
+	//Time limit
+	if (timeLevel >= 30) {
+		gameRunning = false;
+	}
 
 
 	// Check if PC is alive
@@ -515,7 +527,7 @@ void Game::updateGUI()
 	// text to be on screen Right Side
 	textRect = { 400,580,0,0 }; // start position of the text
 	screenText = "HP: " + std::to_string(int(pc->getHP()));
-	screenText += "      Time: " + std::to_string(SDL_GetTicks64() / 1000);
+	screenText += "      Time: " + std::to_string(timeLevel);
 	textColour = { 0, 255, 0 };
 
 	// render the text to screen
@@ -747,7 +759,19 @@ void Game::levelCompleteScreen()
 	if (pc->getHP() < 0) // PC Died - replay current level
 	{
 		// Display Retry Message
-		screenText = "    Your Character Died \n \nPress any key to try again";	
+		screenText = "    Your Character Died \n \nPress any key to try again";
+		previousTime += timeLevel;
+		resetAllObjects();
+		// reload the same map
+		if (currentLevel == 1) loadMap(1);
+		if (currentLevel == 2) loadMap(2);
+		if (currentLevel == 3) loadMap(3);
+	}
+	else if (timeLevel >= 30) // Ran out of time
+	{
+		// Display Retry Message
+		screenText = "    You ran out of time \n \nPress any key to try again";
+		previousTime += timeLevel;
 		resetAllObjects();
 		// reload the same map
 		if (currentLevel == 1) loadMap(1);
@@ -758,6 +782,7 @@ void Game::levelCompleteScreen()
 	{
 		// Display Continue Message
 		screenText = "             Well Done\n \nPress any key to try next level";	
+		previousTime += timeLevel;
 		resetAllObjects();
 		// load the next map
 		if (currentLevel == 1)
