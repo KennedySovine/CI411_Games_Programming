@@ -10,12 +10,12 @@
 
 
 // Constants
-#define SCREEN_WIDTH  1920
-#define SCREEN_HEIGHT 1080
-#define ROWS = 50
+#define SCREEN_WIDTH  800
+#define SCREEN_HEIGHT 600
+#define ROWS = 18
 #define COLUMNS = 25
 #define SPRITE_SIZE 32
-#define FPS 50
+#define FPS 100
 
 
 // ======================================================= 
@@ -38,16 +38,20 @@ public:
 	void render();
 	void closeSDL();
 	void exitScreen();
-
+	bool isReplaying() { return replay;}
+	void levelCompleteScreen();
+	void resetAllObjects();
 	static SDL_Renderer* renderer;
 	static SDL_Event playerInputEvent;
 
 private:
 	bool gameRunning = false;
+	bool replay = true;
 	SDL_Window* gameWindow = nullptr;	
 
 	int activeItems = 0;
 	int activeNPCs = 0;
+	int currentLevel = 0;
 };
 
 // =======================================================

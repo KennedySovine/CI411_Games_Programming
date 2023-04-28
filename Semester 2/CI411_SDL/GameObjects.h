@@ -87,6 +87,7 @@ public:
 	float getY() { return y; }
 	float getAngle() { return angle; }
 	float getHP() { return health; }
+	void setHP(float newHP) { health = newHP; }
 	void changeHP(float hpChange) { health += hpChange; }
 
 	float getVelX() { return xVel;}
@@ -100,10 +101,9 @@ public:
 	void stop();
 
 private:	
-	float drag = 0.9F;
+	float drag = 0.95F;
 	float acceleration = 100;
-	int rotationSpeed = 360;
-	
+	int rotationSpeed = 360;	
 };
 
 // =======================================================
@@ -126,6 +126,7 @@ public:
 
 	float getHP() { return health; }
 	void changeHP(float hpChange) { health += hpChange; }
+	void setHP(float newHP) { health = newHP; }
 	int getNextShotTime() { return nextShotTime; }
 	void setNextShotTime(int newTime) { nextShotTime = newTime; }
 	void changeDirection();

@@ -226,7 +226,8 @@ void PlayerCharacter::updatePC(int keyPressed, float frameTime)
 	if (health > maxHealth) health = maxHealth;	
 
 	// Apply the movement
-	rotateMove(keyPressed, frameTime);
+	//rotateMove(keyPressed, frameTime);
+	smoothMove(keyPressed, frameTime);
 
 	//update Drawing Position Rect
 	destRect.x = (int)x;
@@ -241,6 +242,7 @@ void PlayerCharacter::rotateMove(int keyPressed, float frameTime)
 	// Rotate PC
 	if (keyPressed == 97) angle -= rotationSpeed * frameTime;
 	if (keyPressed == 100) angle += rotationSpeed * frameTime;
+
 	// Cursor Strafe
 	if (keyPressed == 1073741904) xVel -= acceleration * frameTime;
 	if (keyPressed == 1073741903) xVel += acceleration * frameTime;
@@ -309,7 +311,8 @@ void PlayerCharacter::smoothMove(int keyPressed, float frameTime)
 	x += xVel;
 	y += yVel;
 
-	screenLimit();
+//	screenLimit();
+	screenBounce();
 	//screenWrap();
 }//---
 

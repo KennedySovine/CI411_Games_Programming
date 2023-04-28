@@ -37,7 +37,7 @@ void Game::createGameObjects()
 	printf("\nCreating Game Objects");
 	// Create Background
 	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
-	backGround->setSize(1920, 1080); // as not a standard sprite size
+	backGround->setSize(50, 50); // as not a standard sprite size
 
 	// Create Game Objects - filename , x and y pos, initial angle
 	pc = new PlayerCharacter("assets/images/Pawn_Purple.png", 0, 0, 0);

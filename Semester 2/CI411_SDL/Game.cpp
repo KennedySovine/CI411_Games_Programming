@@ -13,7 +13,8 @@ GameInput playerInput;
 // Game Objects
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
-GameObject* items[3] = {};
+GameObject* items[10] = {};
+GameObject* health[10] = {};
 NPC* npcs[15] = {};
 Projectile* bulletsPC[10] = {};
 Projectile* bulletsNPC[20] = {};
@@ -37,7 +38,7 @@ void Game::createGameObjects()
 	printf("\nCreating Game Objects");
 	// Create Background
 	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
-	backGround->setSize(1920, 1080); // as not a standard sprite size
+	backGround->setSize(800, 600); // as not a standard sprite size
 
 	// Create Game Objects - filename , x and y pos, initial angle
 	pc = new PlayerCharacter("assets/images/Pawn_Purple.png", 0, 0, 0);
@@ -53,7 +54,13 @@ void Game::createGameObjects()
 	// Create the Array of items
 	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
 	{
-		items[i] = new GameObject("assets/images/Star_Green.png", 0, 0);
+		items[i] = new GameObject("assets/images/Star_Red.png", 0, 0);
+	}
+
+	// Create the Array of health
+	for (int i = 0; i < sizeof(health) / sizeof(health[0]); i++)
+	{
+		health[i] = new GameObject("assets/images/Star_Green.png", 0, 0);
 	}
 
 	//create PC bullets but do not enable
@@ -80,6 +87,7 @@ void Game::createGameObjects()
 	}
 	// Load Map  
 	loadMap(1);
+	currentLevel = 1;
 }//----
 
 
@@ -99,7 +107,7 @@ void Game::loadMap(int levelNumber)
 					{
 						block->setAlive(true);
 						block->setX(col * SPRITE_SIZE);
-						block->setY(row * SPRITE_SIZE);				
+						block->setY(row * SPRITE_SIZE);
 						break;
 					}
 				}
@@ -127,6 +135,20 @@ void Game::loadMap(int levelNumber)
 
 			if (levelMaps->getTileContent(levelNumber, col, row) == 4) //  Items
 			{
+				for (GameObject* item : health)
+				{
+					if (item->getAliveState() == false)
+					{
+						item->setAlive(true);
+						item->setX(col * SPRITE_SIZE);
+						item->setY(row * SPRITE_SIZE);
+						break;
+					}
+				}
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 5) //  Items
+			{
 				for (GameObject* item : items)
 				{
 					if (item->getAliveState() == false)
@@ -142,7 +164,40 @@ void Game::loadMap(int levelNumber)
 	}
 }//---
 
+// ======================================================= 
 
+void Game::resetAllObjects()
+{
+	// Turn off all objects
+
+	for (GameObject* block : terrainBlocks)
+		block->setAlive(false);
+
+	for (NPC* npc : npcs)
+	{
+		npc->setAlive(false);
+		npc->setHP(100); // reset NPC health
+
+	}
+
+	for (Projectile* bullet : bulletsPC)
+		bullet->setAlive(false);
+
+
+	for (Projectile* bullet : bulletsNPC)
+		bullet->setAlive(false);
+
+	for (GameObject* item : items) // Pickups items
+		item->setAlive(false);
+
+	for (GameObject* item : health) // Pickups items
+		item->setAlive(false);
+
+	// Reset PC stats
+	pc->setHP(100);
+	// anything else that need resetting
+
+}//---
 
 // ======================================================= 
 
@@ -231,7 +286,7 @@ void Game::checkCollision()
 		}
 	}
 
-	for (GameObject* item : items) // Pickups items
+	for (GameObject* item : health) // Health Pickups 
 	{
 		// Only check Alive Items
 		if (item->getAliveState() == true)
@@ -246,6 +301,22 @@ void Game::checkCollision()
 			}
 		}
 	}
+
+	for (GameObject* item : items) // Health Pickups 
+	{
+		// Only check Alive Items
+		if (item->getAliveState() == true)
+		{
+			objectRect.x = item->getX();
+			objectRect.y = item->getY();
+
+			if (SDL_HasIntersection(&pcRect, &objectRect))
+			{
+				item->setAlive(false); // Disable the item hit
+			}
+		}
+	}
+
 
 	// check what alive NPCs hit -
 	for (NPC* npc : npcs)
@@ -351,8 +422,16 @@ void Game::checkGameStates()
 		if (npc->getAliveState()) activeNPCs++;
 	}
 
+	// Check NPCs are cleared
+	//if (activeNPCs == 0) gameRunning = false;
+
+	// Check Items
+	if (activeItems == 0) gameRunning = false;
+
+
 	// Check if PC is alive
 	if (pc->getHP() < 0) gameRunning = false;
+
 
 }//---
 
@@ -363,8 +442,8 @@ void Game::checkGameStates()
 
 void Game::update(float frameTime)
 {
-	// Ensure Frame rate is at the delay speed and convert to deltaTime
-	if (frameTime < 1000 * (float)1 / FPS) frameTime = (float)1 / FPS;
+	// frametime is fixed at 1 / FPS rate
+	frameTime = static_cast<float>(1) / FPS;
 
 	pc->updatePC(playerInput.keyPressed, frameTime);
 
@@ -374,8 +453,7 @@ void Game::update(float frameTime)
 		if (npc->getAliveState())
 		{
 			npc->roam(frameTime);
-			npc->updateNPC();
-			//npc->screenCrawl(frameTime);		
+			npc->updateNPC();		
 		}
 	}
 
@@ -384,8 +462,12 @@ void Game::update(float frameTime)
 		if (block->getAliveState()) block->update();
 	}
 
-
 	for (GameObject* item : items) // Update Items
+	{
+		if (item->getAliveState() == true) item->update();
+	}
+
+	for (GameObject* item : health) // Update Items
 	{
 		if (item->getAliveState() == true) item->update();
 	}
@@ -414,8 +496,10 @@ void Game::updateGUI()
 	SDL_Rect textRect = { 8,8,0,0 }; // start position of the text
 
 	// text to be on screen Left Side	
-	screenText = "Items: " + std::to_string(activeItems);
+	screenText = "Level: " + std::to_string(currentLevel);
+	screenText += "  Items: " + std::to_string(activeItems);
 	screenText += "  NPCs: " + std::to_string(activeNPCs);
+
 	textColour = { 255, 255, 0 };
 
 	// render the text to screen
@@ -424,6 +508,9 @@ void Game::updateGUI()
 	SDL_QueryTexture(textTexture, NULL, NULL, &textRect.w, &textRect.h);
 	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
+	// Clear the memory
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
 
 	// text to be on screen Right Side
 	textRect = { 400,580,0,0 }; // start position of the text
@@ -436,7 +523,6 @@ void Game::updateGUI()
 	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 	SDL_QueryTexture(textTexture, NULL, NULL, &textRect.w, &textRect.h);
 	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-
 
 	// Clear the memory
 	SDL_FreeSurface(textSurface);
@@ -509,6 +595,10 @@ void Game::render()
 	{
 		if (item->getAliveState() == true)  item->render();
 	}
+	for (GameObject* item : health)
+	{
+		if (item->getAliveState() == true)  item->render();
+	}
 	for (NPC* npc : npcs)
 	{
 		if (npc->getAliveState()) npc->renderNPC();
@@ -542,6 +632,7 @@ void Game::handleEvents()
 	{
 	case SDL_QUIT:
 		gameRunning = false;
+		replay = false;
 		break;
 
 	case SDL_MOUSEMOTION: //--------- New Input
@@ -597,25 +688,155 @@ void Game::welcomeScreen()
 	splashScreen->render();
 	SDL_RenderPresent(renderer);
 	SDL_Delay(500);
+
+	// Load a Background to cover the sprites
+	GameObject* background;
+	background = new GameObject("assets/images/Square_grey.png", 0, 0);
+	background->setSize(800, 600);
+	background->render();
+	SDL_RenderPresent(renderer);
+
+	// text Variables
+	std::string screenText;
+	textColour = { 0, 0, 0 };
+	SDL_Rect textRect = { 100, 150,0,0 }; // start position of the text	
+
+	screenText = "Welcome to CI411 example Game";
+	screenText += "\n \n \n\n Collect all the Red Stars to complete a level";
+	screenText += "\n \n Watch out for the Angry Tomatoes";
+	screenText += "\n \n WASD to Move and Mouse to shoot";
+	screenText += "\n \n \n\n\n Press any key to start";
+
+	// render the text to screen
+	textSurface = TTF_RenderText_Blended_Wrapped(font2, screenText.c_str(), textColour, 0);
+	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_QueryTexture(textTexture, NULL, NULL, &textRect.w, &textRect.h);
+	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+	SDL_RenderPresent(renderer);
+	// Clear the memory
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
+
+	// Wait for key press or mouse click
+	bool exitLoop = false;
+	while (!exitLoop)
+	{
+		SDL_PollEvent(&playerInputEvent);
+		if (playerInputEvent.type == SDL_MOUSEBUTTONDOWN || playerInputEvent.type == SDL_KEYDOWN)
+		{
+			exitLoop = true;
+		}
+	}
+
 }//---
+
+// ======================================================= 
+void Game::levelCompleteScreen()
+{
+	// Load a Background to cover the sprites
+	GameObject* background;
+	background = new GameObject("assets/images/Square_grey.png", 0, 0);
+	background->setSize(800, 600);
+	background->render();
+	SDL_RenderPresent(renderer);
+	// text Variables
+	std::string screenText;
+	textColour = { 0, 0, 0 };
+	SDL_Rect textRect = { 200, 250,0,0 }; // start position of the text		
+
+	if (pc->getHP() < 0) // PC Died - replay current level
+	{
+		// Display Retry Message
+		screenText = "    Your Character Died \n \nPress any key to try again";	
+		resetAllObjects();
+		// reload the same map
+		if (currentLevel == 1) loadMap(1);
+		if (currentLevel == 2) loadMap(2);
+		if (currentLevel == 3) loadMap(3);
+	}
+	else // level complete move on
+	{
+		// Display Continue Message
+		screenText = "             Well Done\n \nPress any key to try next level";	
+		resetAllObjects();
+		// load the next map
+		if (currentLevel == 1)
+		{
+			loadMap(2);
+			currentLevel = 2;
+		}
+		else if (currentLevel == 2)
+		{
+			loadMap(3);
+			currentLevel = 3;
+		}
+		else if (currentLevel == 3)
+		{
+			screenText = "Well Done, You completed the game \n\nPress any key to play again";
+			loadMap(1);
+			currentLevel = 1;
+		}
+	}
+	// render the text to screen
+	textSurface = TTF_RenderText_Blended_Wrapped(font2, screenText.c_str(), textColour, 0);
+	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_QueryTexture(textTexture, NULL, NULL, &textRect.w, &textRect.h);
+	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+	SDL_RenderPresent(renderer);
+	// Clear the memory
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
+
+	// Pause to ensure game actions have stopped
+	SDL_Delay(2000);
+	// Wait for key press or mouse click
+	bool exitLoop = false;
+	while (!exitLoop)
+	{
+		SDL_PollEvent(&playerInputEvent);
+		if (playerInputEvent.type == SDL_MOUSEBUTTONDOWN || playerInputEvent.type == SDL_KEYDOWN)
+		{
+			exitLoop = true;
+		}
+	}
+	gameRunning = true;
+}//---
+
+
 
 // ======================================================= 
 void Game::exitScreen()
 {
-	printf("\n\n ----- Thank you for playing -----");
+	// Load a Background to cover the sprites
+	GameObject* background;
+	background = new GameObject("assets/images/Square_grey.png", 0, 0);
+	background->setSize(800, 600);
+	background->render();
+	SDL_RenderPresent(renderer);
 
-	if (pc->getHP() < 0)
-	{
-		GameObject* splashScreen;
-		splashScreen = new GameObject("assets/images/GameOverScreen.png", 0, 0);
-		splashScreen->setSize(800, 600);
-		splashScreen->render();
-		SDL_RenderPresent(renderer);
-		SDL_Delay(2000);
-	}
-	SDL_Delay(500);
+	// text Variables
+	std::string screenText;
+	textColour = { 0, 0, 0 };
+	SDL_Rect textRect = { 250, 250,0,0 }; // start position of the text	
+
+	screenText = "Thanks for Playing\n \n     Good Bye";
+
+	// render the text to screen
+	textSurface = TTF_RenderText_Blended_Wrapped(font2, screenText.c_str(), textColour, 0);
+	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_QueryTexture(textTexture, NULL, NULL, &textRect.w, &textRect.h);
+	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+	SDL_RenderPresent(renderer);
+	// Clear the memory
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
+
+	SDL_Delay(1000);
 
 }//---
+
+
+
 
 // ======================================================= 
 void Game::closeSDL() // Clear Memory and exit SDL

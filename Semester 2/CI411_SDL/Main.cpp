@@ -25,17 +25,21 @@ int main(int argc, char* argv[])
 	game->createGameObjects();
 
 	// Main Game Loop
-	while (game->isRunning())
+	while (game->isReplaying())
 	{
-		frameStart = SDL_GetTicks64();
+		while (game->isRunning()) // add loop for replay
+		{
+			frameStart = SDL_GetTicks64();
+			game->handleEvents();		
+			game->update(frameTime);
+			game->render();
 
-		game->handleEvents();
-		game->update(frameTime);
-		game->render();
-
-		// Limit Frame Rate
-		frameTime = SDL_GetTicks64() - frameStart;
-		if (frameDelay > frameTime) SDL_Delay(frameDelay - frameTime);
+			// Limit Frame Rate
+			frameTime = SDL_GetTicks64() - frameStart;
+			if (frameDelay > frameTime) SDL_Delay(frameDelay - frameTime);
+		}	
+		
+		if (game->isReplaying()) game->levelCompleteScreen();
 	}
 
 	game->exitScreen();
