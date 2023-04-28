@@ -40,7 +40,7 @@ void Game::createGameObjects()
 	printf("\nCreating Game Objects");
 	// Create Background
 	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
-	backGround->setSize(800, 600); // as not a standard sprite size
+	backGround->setSize(1920, 1080); // as not a standard sprite size
 
 	// Create Game Objects - filename , x and y pos, initial angle
 	pc = new PlayerCharacter("assets/images/Pawn_Purple.png", 0, 0, 0);
@@ -696,7 +696,7 @@ void Game::welcomeScreen()
 {
 	GameObject* splashScreen;
 	splashScreen = new GameObject("assets/images/Start_Screen_800.png", 0, 0);
-	splashScreen->setSize(800, 600);
+	splashScreen->setSize(1920, 1080);
 	splashScreen->render();
 	SDL_RenderPresent(renderer);
 	SDL_Delay(500);
@@ -704,7 +704,7 @@ void Game::welcomeScreen()
 	// Load a Background to cover the sprites
 	GameObject* background;
 	background = new GameObject("assets/images/Square_grey.png", 0, 0);
-	background->setSize(800, 600);
+	background->setSize(1920, 1080);
 	background->render();
 	SDL_RenderPresent(renderer);
 
@@ -748,7 +748,7 @@ void Game::levelCompleteScreen()
 	// Load a Background to cover the sprites
 	GameObject* background;
 	background = new GameObject("assets/images/Square_grey.png", 0, 0);
-	background->setSize(800, 600);
+	background->setSize(1920, 1080);
 	background->render();
 	SDL_RenderPresent(renderer);
 	// text Variables
@@ -835,7 +835,7 @@ void Game::exitScreen()
 	// Load a Background to cover the sprites
 	GameObject* background;
 	background = new GameObject("assets/images/Square_grey.png", 0, 0);
-	background->setSize(800, 600);
+	background->setSize(1920, 1080);
 	background->render();
 	SDL_RenderPresent(renderer);
 
