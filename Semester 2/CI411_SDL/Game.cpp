@@ -31,9 +31,19 @@ SDL_Texture* textTexture = nullptr;
 int timeLevel = 0;
 int previousTime = 0;
 
+//Audio
+Mix_Music* music = NULL;
+Mix_Chunk* shootSound = NULL;
+Mix_Chunk* damageSound = NULL;
+
 // ======================================================= 
 void Game::createGameObjects()
 {
+	// Load Audio
+	music = Mix_LoadMUS("assets/audio/DDLoop1.wav");
+	damageSound = Mix_LoadWAV("assets/audio/jump.wav");
+	shootSound = Mix_LoadWAV("assets/audio/shoot.wav");
+
 	// Create Level Object
 	levelMaps = new Levels;
 
@@ -96,6 +106,11 @@ void Game::createGameObjects()
 void Game::loadMap(int levelNumber)
 {
 	std::cout << "\nLoading Level " << levelNumber;
+
+	// Play music specific to each level
+	if (levelNumber == 1) Mix_PlayMusic(music, -1);
+	if (levelNumber == 2) Mix_PlayMusic(music, -1);
+	if (levelNumber == 3) Mix_PlayMusic(music, -1);
 
 	for (int row = 0; row < 18; row++)
 	{
@@ -338,7 +353,8 @@ void Game::checkCollision()
 
 					if (SDL_HasIntersection(&npcRect, &bulletRect)) // NPC
 					{
-						//npc->setAlive(false); // Disable the NPC 						
+						//npc->setAlive(false); // Disable the NPC
+						Mix_PlayChannel(-1, damageSound, 0);
 						npc->changeHP(-bullet->getDamage()); // Apply damage
 
 						bullet->setAlive(false); // disable bullet
@@ -375,6 +391,7 @@ void Game::checkAttacks()
 			if (bullet->getAliveState() == false)
 			{	// fire at the mouse
 				bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
+				Mix_PlayChannel(-1, shootSound, 0);
 				break; // stop checking the array
 			}
 		}
@@ -505,7 +522,7 @@ void Game::update(float frameTime)
 void Game::updateGUI()
 {
 	std::string  screenText;
-	SDL_Rect textRect = { 8,8,0,0 }; // start position of the text
+	SDL_Rect textRect = { 8, 8, 0,0 }; // start position of the text
 
 	// text to be on screen Left Side	
 	screenText = "Level: " + std::to_string(currentLevel);
@@ -525,7 +542,10 @@ void Game::updateGUI()
 	SDL_DestroyTexture(textTexture);
 
 	// text to be on screen Right Side
-	textRect = { 400,580,0,0 }; // start position of the text
+	textRect = { 100,1050,0,0 }; // start position of the text
+	textRect.w = 100;
+	textRect.h = 80;
+
 	screenText = "HP: " + std::to_string(int(pc->getHP()));
 	screenText += "      Time: " + std::to_string(timeLevel);
 	textColour = { 0, 255, 0 };
@@ -683,6 +703,9 @@ void Game::startSDL(const char* title)
 		TTF_Init();
 		font = TTF_OpenFont("assets/fonts/arial.ttf", 22); // size is the last value
 		font2 = TTF_OpenFont("assets/fonts/bubble_pixel-7_dark.ttf", 18); // size is the last value
+
+		// AUDIO
+		Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	}
 	else
 	{
@@ -745,6 +768,9 @@ void Game::welcomeScreen()
 // ======================================================= 
 void Game::levelCompleteScreen()
 {
+	// Stop Music
+	Mix_HaltMusic();
+
 	// Load a Background to cover the sprites
 	GameObject* background;
 	background = new GameObject("assets/images/Square_grey.png", 0, 0);
@@ -762,10 +788,11 @@ void Game::levelCompleteScreen()
 		screenText = "    Your Character Died \n \nPress any key to try again";
 		previousTime += timeLevel;
 		resetAllObjects();
+
 		// reload the same map
-		if (currentLevel == 1) loadMap(1);
-		if (currentLevel == 2) loadMap(2);
-		if (currentLevel == 3) loadMap(3);
+		if (currentLevel == 1) currentLevel = 1;
+		if (currentLevel == 2) currentLevel = 2;
+		if (currentLevel == 3) currentLevel = 3;
 	}
 	else if (timeLevel >= 30) // Ran out of time
 	{
@@ -773,10 +800,11 @@ void Game::levelCompleteScreen()
 		screenText = "    You ran out of time \n \nPress any key to try again";
 		previousTime += timeLevel;
 		resetAllObjects();
+
 		// reload the same map
-		if (currentLevel == 1) loadMap(1);
-		if (currentLevel == 2) loadMap(2);
-		if (currentLevel == 3) loadMap(3);
+		if (currentLevel == 1) currentLevel = 1;
+		if (currentLevel == 2) currentLevel = 2;
+		if (currentLevel == 3) currentLevel = 3;
 	}
 	else // level complete move on
 	{
@@ -787,12 +815,10 @@ void Game::levelCompleteScreen()
 		// load the next map
 		if (currentLevel == 1)
 		{
-			loadMap(2);
 			currentLevel = 2;
 		}
 		else if (currentLevel == 2)
 		{
-			loadMap(3);
 			currentLevel = 3;
 		}
 		else if (currentLevel == 3)
@@ -824,6 +850,7 @@ void Game::levelCompleteScreen()
 			exitLoop = true;
 		}
 	}
+	loadMap(currentLevel);
 	gameRunning = true;
 }//---
 
@@ -866,6 +893,12 @@ void Game::exitScreen()
 // ======================================================= 
 void Game::closeSDL() // Clear Memory and exit SDL
 {
+	// AUDIO
+	Mix_FreeChunk(damageSound);
+	Mix_FreeChunk(shootSound);
+	Mix_FreeMusic(music);
+	Mix_CloseAudio();
+
 	SDL_DestroyWindow(gameWindow);
 	SDL_DestroyRenderer(renderer);
 	TTF_CloseFont(font);

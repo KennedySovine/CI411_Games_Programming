@@ -82,8 +82,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\include;C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\include;C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\lib\x64;C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\lib\x64;C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\include;C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\include;C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\lib\x64;C:\Users\KIS16\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\SDL\lib\x64;C:\Users\thatc\OneDrive\Documents\GitHub\CI411_Games_Programming\Semester 2\SDL\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -123,7 +123,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
