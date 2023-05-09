@@ -12,3 +12,5 @@ Semester 2/CI411_SDL/x64/Debug/CI411_SDL.tlog/unsuccessfulbuild
 *.enc
 *.idb
 Semester 2/CI411_SDL/.vs/CI411_SDL/v17/Browse.VC.opendb
+*.csv
+*.drawio

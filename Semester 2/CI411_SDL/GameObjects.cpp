@@ -227,7 +227,8 @@ void PlayerCharacter::updatePC(int keyPressed, float frameTime)
 
 	// Apply the movement
 	//rotateMove(keyPressed, frameTime);
-	smoothMove(keyPressed, frameTime);
+	//smoothMove(keyPressed, frameTime);
+	stepMove(keyPressed);
 
 	//update Drawing Position Rect
 	destRect.x = (int)x;
@@ -286,6 +287,8 @@ void PlayerCharacter::stepMove(int keyPressed)
 	if (keyPressed == 115) addY(SPRITE_SIZE); //S
 	if (keyPressed == 97) addX(-SPRITE_SIZE); //A
 	if (keyPressed == 100) addX(SPRITE_SIZE); //D
+
+	screenLimit();
 }///---
 
 void PlayerCharacter::smoothMove(int keyPressed, float frameTime)
@@ -311,8 +314,8 @@ void PlayerCharacter::smoothMove(int keyPressed, float frameTime)
 	x += xVel;
 	y += yVel;
 
-//	screenLimit();
-	screenBounce();
+	screenLimit();
+	//screenBounce();
 	//screenWrap();
 }//---
 

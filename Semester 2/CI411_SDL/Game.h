@@ -16,7 +16,7 @@
 #define SCREEN_WIDTH  1920 
 #define SCREEN_HEIGHT 1080
 #define ROWS = 32
-#define COLUMNS = 25
+#define COLUMNS = 50
 #define SPRITE_SIZE 56
 #define FPS 60
 

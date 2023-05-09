@@ -15,7 +15,9 @@ GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
 GameObject* items[10] = {};
 GameObject* health[10] = {};
-NPC* npcs[15] = {};
+NPC* npcs[20] = {};
+NPC* tankNPCS[20] = {};
+NPC* fastNPCS[20] = {};
 Projectile* bulletsPC[10] = {};
 Projectile* bulletsNPC[20] = {};
 GameObject* terrainBlocks[200];
@@ -62,6 +64,18 @@ void Game::createGameObjects()
 		npcs[i]->setSpeed(64);
 		npcs[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
 	}
+	for (int i = 0; i < sizeof(tankNPCS) / sizeof(tankNPCS[0]); i++)
+	{
+		tankNPCS[i] = new NPC("assets/images/Circle_Blue.png", 0, 0, 0);
+		tankNPCS[i]->setSpeed(40);
+		tankNPCS[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
+	}
+	for (int i = 0; i < sizeof(fastNPCS) / sizeof(fastNPCS[0]); i++)
+	{
+		fastNPCS[i] = new NPC("assets/images/Circle_Purple.png", 0, 0, 0);
+		fastNPCS[i]->setSpeed(80);
+		fastNPCS[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
+	}
 
 	// Create the Array of items
 	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
@@ -95,7 +109,7 @@ void Game::createGameObjects()
 	srand(time(NULL)); // seed the random number for variation
 	for (int i = 0; i < sizeof(terrainBlocks) / sizeof(terrainBlocks[0]); i++)
 	{
-		terrainBlocks[i] = new GameObject("assets/images/Square_Cross_Grey.png", 0, 0);
+		terrainBlocks[i] = new GameObject("assets/images/bush_tile.png", 0, 0);
 	}
 	// Load Map  
 	loadMap(1);
@@ -112,9 +126,9 @@ void Game::loadMap(int levelNumber)
 	if (levelNumber == 2) Mix_PlayMusic(music, -1);
 	if (levelNumber == 3) Mix_PlayMusic(music, -1);
 
-	for (int row = 0; row < 18; row++)
+	for (int row = 0; row < 25; row++)
 	{
-		for (int col = 0; col < 25; col++)
+		for (int col = 0; col < 32; col++)
 		{
 			if (levelMaps->getTileContent(levelNumber, col, row) == 1) //  Terrain 
 			{
@@ -130,10 +144,19 @@ void Game::loadMap(int levelNumber)
 				}
 			}
 
-			if (levelMaps->getTileContent(levelNumber, col, row) == 2) // PC
+			if (levelMaps->getTileContent(levelNumber, col, row) == 2) //  Tank NPC
 			{
-				pc->setX(col * SPRITE_SIZE);
-				pc->setY(row * SPRITE_SIZE);
+				for (NPC* npc : tankNPCS)
+				{
+					if (npc->getAliveState() == false)
+					{
+						npc->setAlive(true);
+						npc->setX(col * SPRITE_SIZE);
+						npc->setY(row * SPRITE_SIZE);
+						npc->setHP(200);
+						break;
+					}
+				}
 			}
 
 			if (levelMaps->getTileContent(levelNumber, col, row) == 3) //  NPC
@@ -148,6 +171,27 @@ void Game::loadMap(int levelNumber)
 						break;
 					}
 				}
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 4) //  Fast NPC
+			{
+				for (NPC* npc : fastNPCS)
+				{
+					if (npc->getAliveState() == false)
+					{
+						npc->setAlive(true);
+						npc->setX(col * SPRITE_SIZE);
+						npc->setY(row * SPRITE_SIZE);
+						npc->setHP(75);
+						break;
+					}
+				}
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 9) // PC
+			{
+				pc->setX(col * SPRITE_SIZE);
+				pc->setY(row * SPRITE_SIZE);
 			}
 
 			if (levelMaps->getTileContent(levelNumber, col, row) == 4) //  Items
@@ -196,6 +240,18 @@ void Game::resetAllObjects()
 		npc->setHP(100); // reset NPC health
 
 	}
+	for (NPC* npc : tankNPCS)
+	{
+		npc->setAlive(false);
+		npc->setHP(200); // reset NPC health
+
+	}
+	for (NPC* npc : fastNPCS)
+	{
+		npc->setAlive(false);
+		npc->setHP(75); // reset NPC health
+
+	}
 
 	for (Projectile* bullet : bulletsPC)
 		bullet->setAlive(false);
@@ -242,6 +298,32 @@ void Game::checkCollision()
 			}
 
 			for (NPC* npc : npcs) // NPCs ---------
+			{
+				if (npc->getAliveState() == true)
+				{
+					npcRect.x = npc->getX(); // Update the rect
+					npcRect.y = npc->getY();
+
+					if (SDL_HasIntersection(&npcRect, &objectRect))
+					{
+						npc->changeDirection();
+					}
+				}
+			}
+			for (NPC* npc : tankNPCS) // NPCs ---------
+			{
+				if (npc->getAliveState() == true)
+				{
+					npcRect.x = npc->getX(); // Update the rect
+					npcRect.y = npc->getY();
+
+					if (SDL_HasIntersection(&npcRect, &objectRect))
+					{
+						npc->changeDirection();
+					}
+				}
+			}
+			for (NPC* npc : fastNPCS) // NPCs ---------
 			{
 				if (npc->getAliveState() == true)
 				{
@@ -363,6 +445,60 @@ void Game::checkCollision()
 			}
 		}
 	}
+	for (NPC* npc : tankNPCS)
+	{
+		if (npc->getAliveState() == true)
+		{
+			npcRect.x = npc->getX(); // Update the rect
+			npcRect.y = npc->getY();
+
+			for (Projectile* bullet : bulletsPC)  // PC  Bullets -----------------
+			{
+				if (bullet->getAliveState() == true)
+				{
+					bulletRect.x = bullet->getX(); // Update the rect
+					bulletRect.y = bullet->getY();
+					bulletRect.w = bulletRect.h = bullet->getSize();
+
+					if (SDL_HasIntersection(&npcRect, &bulletRect)) // NPC
+					{
+						//npc->setAlive(false); // Disable the NPC
+						Mix_PlayChannel(-1, damageSound, 0);
+						npc->changeHP(-bullet->getDamage()); // Apply damage
+
+						bullet->setAlive(false); // disable bullet
+					}
+				}
+			}
+		}
+	}
+	for (NPC* npc : fastNPCS)
+	{
+		if (npc->getAliveState() == true)
+		{
+			npcRect.x = npc->getX(); // Update the rect
+			npcRect.y = npc->getY();
+
+			for (Projectile* bullet : bulletsPC)  // PC  Bullets -----------------
+			{
+				if (bullet->getAliveState() == true)
+				{
+					bulletRect.x = bullet->getX(); // Update the rect
+					bulletRect.y = bullet->getY();
+					bulletRect.w = bulletRect.h = bullet->getSize();
+
+					if (SDL_HasIntersection(&npcRect, &bulletRect)) // NPC
+					{
+						//npc->setAlive(false); // Disable the NPC
+						Mix_PlayChannel(-1, damageSound, 0);
+						npc->changeHP(-bullet->getDamage()); // Apply damage
+
+						bullet->setAlive(false); // disable bullet
+					}
+				}
+			}
+		}
+	}
 
 }//---
 
@@ -410,10 +546,60 @@ void Game::checkAttacks()
 					if (bullet->getAliveState() == false)
 					{
 						// Fire at PC
-						bullet->fireAtTarget(npc->getX(), npc->getY(), pc->getX(), pc->getY());
+						//bullet->fireAtTarget(npc->getX(), npc->getY(), pc->getX(), pc->getY());
 
 						// fire Down
-						//bullet->fireAtTarget(npc->getX(), npc->getY(), npc->getX(), SCREEN_HEIGHT);
+						bullet->fireAtTarget(npc->getX(), npc->getY(), npc->getX(), SCREEN_HEIGHT);
+
+						// Set Random shot time - Current time + 3s + random upto 7s
+						npc->setNextShotTime(SDL_GetTicks() + 3000 + rand() % 7000);
+						break; // stop checking the bullet array
+					}
+				}
+			}
+		}
+	}
+	for (NPC* npc : tankNPCS)
+	{
+		if (npc->getAliveState() == true)
+		{
+			if (npc->getNextShotTime() < SDL_GetTicks())
+			{
+				// find the first inactive bullet and enable it at the PC Position
+				for (Projectile* bullet : bulletsNPC)
+				{
+					if (bullet->getAliveState() == false)
+					{
+						// Fire at PC
+						//bullet->fireAtTarget(npc->getX(), npc->getY(), pc->getX(), pc->getY());
+
+						// fire Down
+						bullet->fireAtTarget(npc->getX(), npc->getY(), npc->getX(), SCREEN_HEIGHT);
+
+						// Set Random shot time - Current time + 3s + random upto 7s
+						npc->setNextShotTime(SDL_GetTicks() + 3000 + rand() % 7000);
+						break; // stop checking the bullet array
+					}
+				}
+			}
+		}
+	}
+	for (NPC* npc : fastNPCS)
+	{
+		if (npc->getAliveState() == true)
+		{
+			if (npc->getNextShotTime() < SDL_GetTicks())
+			{
+				// find the first inactive bullet and enable it at the PC Position
+				for (Projectile* bullet : bulletsNPC)
+				{
+					if (bullet->getAliveState() == false)
+					{
+						// Fire at PC
+						//bullet->fireAtTarget(npc->getX(), npc->getY(), pc->getX(), pc->getY());
+
+						// fire Down
+						bullet->fireAtTarget(npc->getX(), npc->getY(), npc->getX(), SCREEN_HEIGHT);
 
 						// Set Random shot time - Current time + 3s + random upto 7s
 						npc->setNextShotTime(SDL_GetTicks() + 3000 + rand() % 7000);
@@ -440,22 +626,30 @@ void Game::checkGameStates()
 	{
 		if (npc->getAliveState()) activeNPCs++;
 	}
+	for (NPC* npc : tankNPCS)
+	{
+		if (npc->getAliveState()) activeNPCs++;
+	}
+	for (NPC* npc : fastNPCS)
+	{
+		if (npc->getAliveState()) activeNPCs++;
+	}
 
 	timeLevel = (SDL_GetTicks64() / 1000) - previousTime;
 
 	// Check NPCs are cleared
-	//if (activeNPCs == 0) gameRunning = false;
+	if (activeNPCs == 0) gameRunning = false;
 
 	// Check Items
 	//if (activeItems == 0) gameRunning = false;
 
 	//NPCS and Items cleared
-	if (activeNPCs == 0 && activeItems == 0) gameRunning = false;
+	//if (activeNPCs == 0 && activeItems == 0) gameRunning = false;
 
 	//Time limit
-	if (timeLevel >= 30) {
+	/*if (timeLevel >= 30) {
 		gameRunning = false;
-	}
+	}*/
 
 
 	// Check if PC is alive
@@ -481,8 +675,24 @@ void Game::update(float frameTime)
 	{
 		if (npc->getAliveState())
 		{
-			npc->roam(frameTime);
+			npc->screenCrawl(frameTime);
 			npc->updateNPC();		
+		}
+	}
+	for (NPC* npc : tankNPCS)
+	{
+		if (npc->getAliveState())
+		{
+			npc->screenCrawl(frameTime);
+			npc->updateNPC();
+		}
+	}
+	for (NPC* npc : fastNPCS)
+	{
+		if (npc->getAliveState())
+		{
+			npc->screenCrawl(frameTime);
+			npc->updateNPC();
 		}
 	}
 
@@ -593,6 +803,50 @@ void Game::drawHPBars()
 			SDL_RenderDrawRect(Game::renderer, &hpBar);
 		}
 	}
+	for (NPC* npc : tankNPCS) //Draw NPC Bars
+	{
+		if (npc->getAliveState())
+		{
+			hpBar.h = 2;
+			hpBar.w = SPRITE_SIZE * npc->getHP() / 100; ;
+			hpBar.x = npc->getX();
+			hpBar.y = npc->getY() - 10;
+
+			// Colour of HP Bar
+			if (npc->getHP() >= 50) // Green
+				SDL_SetRenderDrawColor(Game::renderer, 0, 200, 00, 255);
+
+			else if (npc->getHP() >= 25 && npc->getHP() < 50) // Yellow
+				SDL_SetRenderDrawColor(Game::renderer, 250, 250, 0, 255);
+
+			else // Red
+				SDL_SetRenderDrawColor(Game::renderer, 250, 0, 0, 255);
+
+			SDL_RenderDrawRect(Game::renderer, &hpBar);
+		}
+	}
+	for (NPC* npc : fastNPCS) //Draw NPC Bars
+	{
+		if (npc->getAliveState())
+		{
+			hpBar.h = 2;
+			hpBar.w = SPRITE_SIZE * npc->getHP() / 100; ;
+			hpBar.x = npc->getX();
+			hpBar.y = npc->getY() - 10;
+
+			// Colour of HP Bar
+			if (npc->getHP() >= 50) // Green
+				SDL_SetRenderDrawColor(Game::renderer, 0, 200, 00, 255);
+
+			else if (npc->getHP() >= 25 && npc->getHP() < 50) // Yellow
+				SDL_SetRenderDrawColor(Game::renderer, 250, 250, 0, 255);
+
+			else // Red
+				SDL_SetRenderDrawColor(Game::renderer, 250, 0, 0, 255);
+
+			SDL_RenderDrawRect(Game::renderer, &hpBar);
+		}
+	}
 
 	// Draw PC Bar
 	hpBar.w = SPRITE_SIZE * pc->getHP() / 100;
@@ -632,6 +886,14 @@ void Game::render()
 		if (item->getAliveState() == true)  item->render();
 	}
 	for (NPC* npc : npcs)
+	{
+		if (npc->getAliveState()) npc->renderNPC();
+	}
+	for (NPC* npc : tankNPCS)
+	{
+		if (npc->getAliveState()) npc->renderNPC();
+	}
+	for (NPC* npc : tankNPCS)
 	{
 		if (npc->getAliveState()) npc->renderNPC();
 	}
@@ -794,7 +1056,7 @@ void Game::levelCompleteScreen()
 		if (currentLevel == 2) currentLevel = 2;
 		if (currentLevel == 3) currentLevel = 3;
 	}
-	else if (timeLevel >= 30) // Ran out of time
+	/*else if (timeLevel >= 30) // Ran out of time
 	{
 		// Display Retry Message
 		screenText = "    You ran out of time \n \nPress any key to try again";
@@ -805,7 +1067,7 @@ void Game::levelCompleteScreen()
 		if (currentLevel == 1) currentLevel = 1;
 		if (currentLevel == 2) currentLevel = 2;
 		if (currentLevel == 3) currentLevel = 3;
-	}
+	}*/
 	else // level complete move on
 	{
 		// Display Continue Message
