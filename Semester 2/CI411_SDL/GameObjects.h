@@ -19,6 +19,7 @@ public:
 	void screenLimit();
 	void screenBounce();
 	void screenWrap();	
+	void spawnItem();
 	void disableOffScreen();
 	float getX() { return x; }
 	float getY() { return y; }
