@@ -126,9 +126,9 @@ void Game::loadMap(int levelNumber)
 	if (levelNumber == 2) Mix_PlayMusic(music, -1);
 	if (levelNumber == 3) Mix_PlayMusic(music, -1);
 
-	for (int row = 0; row < 25; row++)
+	for (int row = 0; row < 18; row++)
 	{
-		for (int col = 0; col < 32; col++)
+		for (int col = 0; col < 33; col++)
 		{
 			if (levelMaps->getTileContent(levelNumber, col, row) == 1) //  Terrain 
 			{
