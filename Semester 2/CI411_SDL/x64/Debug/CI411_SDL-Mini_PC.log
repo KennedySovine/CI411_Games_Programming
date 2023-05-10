@@ -1,0 +1,26 @@
+﻿  GameObjects.cpp
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(26,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(26,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(139,15): warning C4244: '=': conversion from 'float' to 'Uint32', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(140,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(140,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(155,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(156,35): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(202,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(202,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(253,50): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(254,50): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(258,50): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(259,50): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(339,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(339,17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(367,23): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(389,41): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(390,42): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(395,24): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(417,42): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(426,31): warning C4305: '=': truncation from 'double' to 'float'
+  Level.cpp
+  Generating Code...
+  CI411_SDL.vcxproj -> C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\x64\Debug\CI411_SDL.exe

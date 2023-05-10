@@ -13,13 +13,13 @@ GameInput playerInput;
 // Game Objects
 GameObject* backGround = nullptr;
 PlayerCharacter* pc = nullptr;
-GameObject* items[10] = {};
+GameObject* items[4] = {};
 GameObject* health[10] = {};
-NPC* npcs[20] = {};
-NPC* tankNPCS[20] = {};
-NPC* fastNPCS[20] = {};
+NPC* npcs[100] = {};
+NPC* tankNPCS[100] = {};
+NPC* fastNPCS[100] = {};
 Projectile* bulletsPC[10] = {};
-Projectile* bulletsNPC[20] = {};
+Projectile* bulletsNPC[100] = {};
 GameObject* terrainBlocks[200];
 Levels* levelMaps = nullptr;
 
@@ -32,11 +32,17 @@ SDL_Surface* textSurface = nullptr;
 SDL_Texture* textTexture = nullptr;
 int timeLevel = 0;
 int previousTime = 0;
+int points = 0;
 
 //Audio
 Mix_Music* music = NULL;
 Mix_Chunk* shootSound = NULL;
 Mix_Chunk* damageSound = NULL;
+
+//Prisms
+bool blue = false;
+bool yellow = false;
+int itemTime = 0;
 
 // ======================================================= 
 void Game::createGameObjects()
@@ -80,7 +86,21 @@ void Game::createGameObjects()
 	// Create the Array of items
 	for (int i = 0; i < sizeof(items) / sizeof(items[0]); i++)
 	{
-		items[i] = new GameObject("assets/images/Star_Red.png", 0, 0);
+		switch (i) {
+		case 0:
+			items[i] = new GameObject("assets/images/red_prism.png", 0, 0);
+			break;
+		case 1:
+			items[i] = new GameObject("assets/images/blue_prism.png", 0, 0);
+			break;
+		case 2:
+			items[i] = new GameObject("assets/images/yellow_prism.png", 0, 0);
+			break;
+		case 3:
+			items[i] = new GameObject("assets/images/white_prism.png", 0, 0);
+			break;
+
+		}
 	}
 
 	// Create the Array of health
@@ -194,7 +214,7 @@ void Game::loadMap(int levelNumber)
 				pc->setY(row * SPRITE_SIZE);
 			}
 
-			if (levelMaps->getTileContent(levelNumber, col, row) == 4) //  Items
+			/*if (levelMaps->getTileContent(levelNumber, col, row) == 4) //  Items
 			{
 				for (GameObject* item : health)
 				{
@@ -206,7 +226,7 @@ void Game::loadMap(int levelNumber)
 						break;
 					}
 				}
-			}
+			}*/
 
 			if (levelMaps->getTileContent(levelNumber, col, row) == 5) //  Items
 			{
@@ -261,9 +281,6 @@ void Game::resetAllObjects()
 		bullet->setAlive(false);
 
 	for (GameObject* item : items) // Pickups items
-		item->setAlive(false);
-
-	for (GameObject* item : health) // Pickups items
 		item->setAlive(false);
 
 	// Reset PC stats
@@ -385,7 +402,8 @@ void Game::checkCollision()
 		}
 	}
 
-	for (GameObject* item : health) // Health Pickups 
+	int itemCount = 0;
+	for (GameObject* item : items) // Items
 	{
 		// Only check Alive Items
 		if (item->getAliveState() == true)
@@ -395,25 +413,25 @@ void Game::checkCollision()
 
 			if (SDL_HasIntersection(&pcRect, &objectRect))
 			{
+				switch (itemCount){
+				case 0:
+					pc->setHP(100);
+					break;
+				case 1:
+					blue = true;
+					break;
+				case 2:
+					yellow = true;
+					break;
+				case 3:
+					points += 1000;
+					break;
+				}
+				
 				item->setAlive(false); // Disable the item hit
-				pc->changeHP(50);
 			}
 		}
-	}
-
-	for (GameObject* item : items) // Health Pickups 
-	{
-		// Only check Alive Items
-		if (item->getAliveState() == true)
-		{
-			objectRect.x = item->getX();
-			objectRect.y = item->getY();
-
-			if (SDL_HasIntersection(&pcRect, &objectRect))
-			{
-				item->setAlive(false); // Disable the item hit
-			}
-		}
+		itemCount++;
 	}
 
 
@@ -435,10 +453,13 @@ void Game::checkCollision()
 
 					if (SDL_HasIntersection(&npcRect, &bulletRect)) // NPC
 					{
+						if (yellow) {
+							bullet->setDamage(npc->getHP());
+						}
 						//npc->setAlive(false); // Disable the NPC
 						Mix_PlayChannel(-1, damageSound, 0);
 						npc->changeHP(-bullet->getDamage()); // Apply damage
-
+						points += 100;
 						bullet->setAlive(false); // disable bullet
 					}
 				}
@@ -462,10 +483,13 @@ void Game::checkCollision()
 
 					if (SDL_HasIntersection(&npcRect, &bulletRect)) // NPC
 					{
+						if (yellow) {
+							bullet->setDamage(npc->getHP());
+						}
 						//npc->setAlive(false); // Disable the NPC
 						Mix_PlayChannel(-1, damageSound, 0);
 						npc->changeHP(-bullet->getDamage()); // Apply damage
-
+						points += 500;
 						bullet->setAlive(false); // disable bullet
 					}
 				}
@@ -483,6 +507,9 @@ void Game::checkCollision()
 			{
 				if (bullet->getAliveState() == true)
 				{
+					if (yellow) {
+						bullet->setDamage(npc->getHP());
+					}
 					bulletRect.x = bullet->getX(); // Update the rect
 					bulletRect.y = bullet->getY();
 					bulletRect.w = bulletRect.h = bullet->getSize();
@@ -492,7 +519,7 @@ void Game::checkCollision()
 						//npc->setAlive(false); // Disable the NPC
 						Mix_PlayChannel(-1, damageSound, 0);
 						npc->changeHP(-bullet->getDamage()); // Apply damage
-
+						points += 200;
 						bullet->setAlive(false); // disable bullet
 					}
 				}
@@ -509,27 +536,62 @@ void Game::checkAttacks()
 	if (playerInput.keyPressed == 32) // Space 
 	{
 		// find the first inactive bullet and enable it at the PC Position
-		for (Projectile* bullet : bulletsPC)
-		{
-			if (bullet->getAliveState() == false)
-			{	// fire in the direction the pc is facing
-				bullet->fire(pc->getX(), pc->getY(), pc->getAngle());
-				break; // stop checking the array
+		int count = 0;
+		if (blue) {
+			while (count < 3) {
+				for (Projectile* bullet : bulletsPC)
+				{
+					if (bullet->getAliveState() == false)
+					{	// fire in the direction the pc is facing
+						bullet->fire(pc->getX(), pc->getY(), pc->getAngle());
+						count++;
+						break; // stop checking the array
+					}
+				}
 			}
+		}
+		else {
+			for (Projectile* bullet : bulletsPC)
+			{
+				if (bullet->getAliveState() == false)
+				{	// fire at the mouse
+					bullet->fire(pc->getX(), pc->getY(), pc->getAngle());
+					count++;
+					break; // stop checking the array
+				}
+			}
+
 		}
 	}
 
 	if (playerInput.mouseL) //  L Mouse 
 	{
 		// find the first inactive bullet and enable it at the PC Position
-		for (Projectile* bullet : bulletsPC)
-		{
-			if (bullet->getAliveState() == false)
-			{	// fire at the mouse
-				bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
-				Mix_PlayChannel(-1, shootSound, 0);
-				break; // stop checking the array
+		int count = 0;
+		if (blue) {
+			while (count < 3) {
+				for (Projectile* bullet : bulletsPC)
+				{
+					if (bullet->getAliveState() == false)
+					{	// fire at the mouse
+						bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
+						count++;
+						break; // stop checking the array
+					}
+				}
 			}
+		}
+		else {
+			for (Projectile* bullet : bulletsPC)
+			{
+				if (bullet->getAliveState() == false)
+				{	// fire at the mouse
+					bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
+					count++;
+					break; // stop checking the array
+				}
+			}
+
 		}
 	}
 
@@ -701,15 +763,10 @@ void Game::update(float frameTime)
 		if (block->getAliveState()) block->update();
 	}
 
-	for (GameObject* item : items) // Update Items
+	/*for (GameObject* item : items) // Update Items
 	{
 		if (item->getAliveState() == true) item->update();
-	}
-
-	for (GameObject* item : health) // Update Items
-	{
-		if (item->getAliveState() == true) item->update();
-	}
+	}*/
 
 	for (Projectile* bullet : bulletsPC) //--------- New Bullet
 	{
@@ -720,6 +777,18 @@ void Game::update(float frameTime)
 	{
 		if (bullet->getAliveState()) bullet->update(frameTime);
 	}
+
+	//Item random spawn
+	int rando = rand() % 4;
+
+	if (SDL_GetTicks() % 15 == 0) {
+		int spawn_locationX = 1 + rand() % 30;
+		int spawn_locationY = 12 + rand() % 4;
+
+		items[rando]->setX(spawn_locationX);
+		items[rando]->setY(spawn_locationY);
+	}
+
 
 	checkAttacks();
 	checkCollision();
@@ -732,7 +801,7 @@ void Game::update(float frameTime)
 void Game::updateGUI()
 {
 	std::string  screenText;
-	SDL_Rect textRect = { 8, 8, 0,0 }; // start position of the text
+	SDL_Rect textRect = { 500, 1050, 0,0 }; // start position of the text
 
 	// text to be on screen Left Side	
 	screenText = "Level: " + std::to_string(currentLevel);
@@ -757,7 +826,7 @@ void Game::updateGUI()
 	textRect.h = 80;
 
 	screenText = "HP: " + std::to_string(int(pc->getHP()));
-	screenText += "      Time: " + std::to_string(timeLevel);
+	screenText += "      Points: " + std::to_string(points);
 	textColour = { 0, 255, 0 };
 
 	// render the text to screen
