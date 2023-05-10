@@ -421,12 +421,11 @@ void NPC::screenCrawl(float frameTime)
 			y -= SPRITE_SIZE;
 		xVel = -xVel;
 	}
-	if (x < 0 + SPRITE_SIZE * 1.025) // hit LHS
-	{	
-		x = 0 + (SPRITE_SIZE* 1.025);
-		if (yVel < 0) {
+	if (x < 0 + SPRITE_SIZE) // hit LHS
+	{
+		x = 0 + (SPRITE_SIZE * 3.35);
+		if (yVel < 0)
 			y += SPRITE_SIZE;
-		}
 		else
 			y -= SPRITE_SIZE;
 		xVel = -xVel;
