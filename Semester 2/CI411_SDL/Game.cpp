@@ -801,7 +801,7 @@ void Game::update(float frameTime)
 void Game::updateGUI()
 {
 	std::string  screenText;
-	SDL_Rect textRect = { 8, 8, 0,0 }; // start position of the text
+	SDL_Rect textRect = { 500, 1050, 0,0 }; // start position of the text
 
 	// text to be on screen Left Side	
 	screenText = "Level: " + std::to_string(currentLevel);
