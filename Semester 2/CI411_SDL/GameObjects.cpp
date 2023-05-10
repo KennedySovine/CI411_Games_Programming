@@ -412,23 +412,47 @@ void NPC::screenCrawl(float frameTime)
 		yVel = -1;
 	}
 
-	if (x > SCREEN_WIDTH - (SPRITE_SIZE*3.35)) // hit RHS
+	if (x > SCREEN_WIDTH - SPRITE_SIZE) // hit RHS
 	{
-		x = SCREEN_WIDTH - (SPRITE_SIZE * 3.35);
+		x = SCREEN_WIDTH - SPRITE_SIZE;
 		if (yVel < 0)
 			y += SPRITE_SIZE;
 		else
 			y -= SPRITE_SIZE;
 		xVel = -xVel;
 	}
+<<<<<<< HEAD
+<<<<<<< HEAD
 	if (x < 0 + SPRITE_SIZE) // hit LHS
 	{
 		x = 0 + (SPRITE_SIZE * 3.35);
+=======
+	if (x < 0) // hit LHS
+	{
+		x = 0;
+>>>>>>> parent of 6e4749e (Enemies properly move when hitting LHS)
+=======
+	if (x < 0) // hit LHS
+	{
+		x = 0;
+>>>>>>> parent of 6e4749e (Enemies properly move when hitting LHS)
 		if (yVel < 0)
 			y += SPRITE_SIZE;
 		else
 			y -= SPRITE_SIZE;
 		xVel = -xVel;
+	}
+
+	if (y > SCREEN_HEIGHT - SPRITE_SIZE) // hit bottom of Screen
+	{
+		y = 512;
+		yVel = -yVel;
+	}
+
+	if (y < 0)// hit top of Screen
+	{
+		y = 0;
+		yVel = -yVel;
 	}
 
 	x += xVel * frameTime;
