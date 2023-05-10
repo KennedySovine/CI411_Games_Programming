@@ -422,9 +422,15 @@ void NPC::screenCrawl(float frameTime)
 		xVel = -xVel;
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (x < 0 + SPRITE_SIZE) // hit LHS
 	{
 		x = 0 + (SPRITE_SIZE * 3.35);
+=======
+	if (x < 0) // hit LHS
+	{
+		x = 0;
+>>>>>>> parent of 6e4749e (Enemies properly move when hitting LHS)
 =======
 	if (x < 0) // hit LHS
 	{

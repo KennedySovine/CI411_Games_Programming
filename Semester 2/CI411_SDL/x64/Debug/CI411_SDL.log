@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿  GameObjects.cpp
 C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\GameObjects.cpp(26,6): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
@@ -25,6 +26,8 @@ C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Intr
   Level.cpp
   Generating Code...
 =======
+=======
+>>>>>>> parent of 6e4749e (Enemies properly move when hitting LHS)
 ﻿  Game.cpp
 C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(109,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(140,23): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
@@ -97,5 +100,8 @@ C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Intr
 C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(852,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(853,20): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\Game.cpp(854,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+<<<<<<< HEAD
+>>>>>>> parent of 6e4749e (Enemies properly move when hitting LHS)
+=======
 >>>>>>> parent of 6e4749e (Enemies properly move when hitting LHS)
   CI411_SDL.vcxproj -> C:\Users\thatc\OneDrive - University of Brighton\First_Year_Modules\CI411 - Introduction to Games Programming\Semester 2\CI411_SDL\x64\Debug\CI411_SDL.exe
