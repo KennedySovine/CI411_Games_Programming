@@ -20,7 +20,7 @@ NPC* tankNPCS[100] = {};
 NPC* fastNPCS[100] = {};
 Projectile* bulletsPC[10] = {};
 Projectile* bulletsNPC[100] = {};
-GameObject* terrainBlocks[200];
+GameObject* terrainBlocks[250];
 Levels* levelMaps = nullptr;
 
 // Text
@@ -64,6 +64,7 @@ void Game::createGameObjects()
 	pc = new PlayerCharacter("assets/images/Pawn_Purple.png", 0, 0, 0);
 
 	// Create an Array of NPCs
+	srand(time(NULL));
 	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
 	{
 		npcs[i] = new NPC("assets/images/Circle_Red.png", 0, 0, 0);
@@ -630,6 +631,7 @@ void Game::checkAttacks()
 						bullet->fireAtTarget(npc->getX(), npc->getY(), npc->getX(), SCREEN_HEIGHT);
 
 						// Set Random shot time - Current time + 3s + random upto 7s
+						srand(time(NULL));
 						npc->setNextShotTime(SDL_GetTicks() + 3000 + rand() % 7000);
 						break; // stop checking the bullet array
 					}
@@ -718,18 +720,6 @@ void Game::checkGameStates()
 	// Check NPCs are cleared
 	if (activeNPCs == 0) gameRunning = false;
 
-	// Check Items
-	//if (activeItems == 0) gameRunning = false;
-
-	//NPCS and Items cleared
-	//if (activeNPCs == 0 && activeItems == 0) gameRunning = false;
-
-	//Time limit
-	/*if (timeLevel >= 30) {
-		gameRunning = false;
-	}*/
-
-
 	// Check if PC is alive
 	if (pc->getHP() < 0) gameRunning = false;
 
@@ -800,6 +790,7 @@ void Game::update(float frameTime)
 	}
 
 	//Item random spawn
+	srand(time(NULL));
 	int rando = rand() % 4;
 	bool emptyField = true;
 
@@ -831,7 +822,6 @@ void Game::updateGUI()
 
 	// text to be on screen Left Side	
 	screenText = "Level: " + std::to_string(currentLevel);
-	screenText += "  Items: " + std::to_string(activeItems);
 	screenText += "  NPCs: " + std::to_string(activeNPCs);
 
 	textColour = { 255, 255, 0 };
@@ -1157,7 +1147,6 @@ void Game::levelCompleteScreen()
 	{
 		// Display Continue Message
 		screenText = "             Well Done\n \nPress any key to try next level";	
-		previousTime += timeLevel;
 		resetAllObjects();
 		// load the next map
 		currentLevel++;
