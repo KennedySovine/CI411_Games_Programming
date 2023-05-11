@@ -78,7 +78,7 @@ void Game::createGameObjects()
 	}
 	for (int i = 0; i < sizeof(fastNPCS) / sizeof(fastNPCS[0]); i++)
 	{
-		fastNPCS[i] = new NPC("assets/images/Circle_Purple.png", 0, 0, 0);
+		fastNPCS[i] = new NPC("assets/images/Circle_Green.png", 0, 0, 0);
 		fastNPCS[i]->setSpeed(70);
 		fastNPCS[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
 	}
@@ -579,30 +579,17 @@ void Game::checkAttacks()
 	{
 		// find the first inactive bullet and enable it at the PC Position
 		int count = 0;
-		if (blue) {
-			while (count < 3) {
-				for (Projectile* bullet : bulletsPC)
-				{
-					if (bullet->getAliveState() == false)
-					{	// fire in the direction the pc is facing
-						bullet->fire(pc->getX(), pc->getY(), pc->getAngle());
-						count++;
-						break; // stop checking the array
-					}
+		for (Projectile* bullet : bulletsPC)
+		{
+			if (bullet->getAliveState() == false)
+			{	// fire at the mouse
+				if (blue) {
+					bullet->setDamage(bullet->getDamage() * 1.5);
 				}
+				bullet->fire(pc->getX(), pc->getY(), pc->getAngle());
+				count++;
+				break; // stop checking the array
 			}
-		}
-		else {
-			for (Projectile* bullet : bulletsPC)
-			{
-				if (bullet->getAliveState() == false)
-				{	// fire at the mouse
-					bullet->fire(pc->getX(), pc->getY(), pc->getAngle());
-					count++;
-					break; // stop checking the array
-				}
-			}
-
 		}
 	}
 
@@ -610,30 +597,17 @@ void Game::checkAttacks()
 	{
 		// find the first inactive bullet and enable it at the PC Position
 		int count = 0;
-		if (blue) {
-			while (count < 3) {
-				for (Projectile* bullet : bulletsPC)
-				{
-					if (bullet->getAliveState() == false)
-					{	// fire at the mouse
-						bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
-						count++;
-						break; // stop checking the array
-					}
+		for (Projectile* bullet : bulletsPC)
+		{
+			if (bullet->getAliveState() == false)
+			{	// fire at the mouse
+				if (blue) {
+					bullet->setDamage(bullet->getDamage() * 1.5);
 				}
+				bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
+				count++;
+				break; // stop checking the array
 			}
-		}
-		else {
-			for (Projectile* bullet : bulletsPC)
-			{
-				if (bullet->getAliveState() == false)
-				{	// fire at the mouse
-					bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
-					count++;
-					break; // stop checking the array
-				}
-			}
-
 		}
 	}
 
@@ -739,7 +713,7 @@ void Game::checkGameStates()
 		if (npc->getAliveState()) activeNPCs++;
 	}
 
-	timeLevel = (SDL_GetTicks64() / 1000) - previousTime;
+	timeLevel = (SDL_GetTicks64() / 1000);
 
 	// Check NPCs are cleared
 	if (activeNPCs == 0) gameRunning = false;
@@ -773,6 +747,11 @@ void Game::update(float frameTime)
 	frameTime = static_cast<float>(1) / FPS;
 
 	pc->updatePC(playerInput.keyPressed, frameTime);
+
+	if (timeLevel - itemTime == 5) { //Disable effects
+		blue = false;
+		yellow = false;
+	}
 
 	// Set NPC Behaviours
 	for (NPC* npc : npcs)
@@ -822,9 +801,18 @@ void Game::update(float frameTime)
 
 	//Item random spawn
 	int rando = rand() % 4;
+	bool emptyField = true;
 
-	if ((SDL_GetTicks()/1000) % 15 == 0) {
-		items[rando]->setAlive(true);
+	for (GameObject* item : items) {
+		if (item->getAliveState())
+			emptyField = false;
+	}
+
+	if (emptyField) { // If there are no other items spawned
+		if ((SDL_GetTicks() / 1000) % 15 == 0) {
+			items[rando]->setAlive(true);
+			itemTime = timeLevel;
+		}
 	}
 
 
@@ -1165,18 +1153,6 @@ void Game::levelCompleteScreen()
 		if (currentLevel == 4) currentLevel = 4;
 		if (currentLevel == 5) currentLevel = 5;
 	}
-	/*else if (timeLevel >= 30) // Ran out of time
-	{
-		// Display Retry Message
-		screenText = "    You ran out of time \n \nPress any key to try again";
-		previousTime += timeLevel;
-		resetAllObjects();
-
-		// reload the same map
-		if (currentLevel == 1) currentLevel = 1;
-		if (currentLevel == 2) currentLevel = 2;
-		if (currentLevel == 3) currentLevel = 3;
-	}*/
 	else // level complete move on
 	{
 		// Display Continue Message

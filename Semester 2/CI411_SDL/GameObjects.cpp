@@ -226,8 +226,6 @@ void PlayerCharacter::updatePC(int keyPressed, float frameTime)
 	if (health > maxHealth) health = maxHealth;	
 
 	// Apply the movement
-	//rotateMove(keyPressed, frameTime);
-	//smoothMove(keyPressed, frameTime);
 	stepMove(keyPressed);
 
 	//update Drawing Position Rect
@@ -237,46 +235,6 @@ void PlayerCharacter::updatePC(int keyPressed, float frameTime)
 
 
 // ======================================================= 
-
-void PlayerCharacter::rotateMove(int keyPressed, float frameTime)
-{
-	// Rotate PC
-	if (keyPressed == 97) angle -= rotationSpeed * frameTime;
-	if (keyPressed == 100) angle += rotationSpeed * frameTime;
-
-	// Cursor Strafe
-	if (keyPressed == 1073741904) xVel -= acceleration * frameTime;
-	if (keyPressed == 1073741903) xVel += acceleration * frameTime;
-
-	if (keyPressed == 119 || keyPressed == 1073741906) // W  - Move Forward
-	{
-		xVel += sin(angle * M_PI / 180) * acceleration * frameTime;
-		yVel -= cos(angle * M_PI / 180) * acceleration * frameTime;
-	}
-	if (keyPressed == 115 || keyPressed == 1073741905) // S	  - Back
-	{
-		xVel -= sin(angle * M_PI / 180) * acceleration * frameTime;
-		yVel += cos(angle * M_PI / 180) * acceleration * frameTime;
-	}
-	// Limit Speed
-	if (xVel > speed) xVel = speed;
-	if (yVel > speed) yVel = speed;
-	if (xVel < -speed) xVel = -speed;
-	if (yVel < -speed) yVel = -speed;
-
-	// apply drag
-	if (abs(xVel) > 0.3f) xVel *= drag; else xVel = 0;
-	if (abs(yVel) > 0.3f) yVel *= drag; else yVel = 0;
-
-	// Update positions
-	x += xVel;
-	y += yVel;
-
-	// Limit Movement	
-	//screenWrap();
-	screenBounce();
-	//screenLimit();
-}//---
 
 // ======================================================= 
 
@@ -290,35 +248,6 @@ void PlayerCharacter::stepMove(int keyPressed)
 
 	screenLimit();
 }///---
-
-void PlayerCharacter::smoothMove(int keyPressed, float frameTime)
-{
-	// WSAD /// Add Acceleration
-	if (keyPressed == 119) yVel -= acceleration * frameTime;
-	if (keyPressed == 115) yVel += acceleration * frameTime;
-	if (keyPressed == 97)  xVel -= acceleration * frameTime;
-	if (keyPressed == 100) xVel += acceleration * frameTime;
-
-	// Limit Speed
-	if (xVel > speed) xVel = speed;
-	if (yVel > speed) yVel = speed;
-	if (xVel < -speed) xVel = -speed;
-	if (yVel < -speed) yVel = -speed;
-
-	// apply drag
-	if (abs(xVel) > 0.3f) xVel *= drag; else xVel = 0;
-	if (abs(yVel) > 0.3f) yVel *= drag; else yVel = 0;
-
-
-	// Update positions
-	x += xVel;
-	y += yVel;
-
-	screenLimit();
-	//screenBounce();
-	//screenWrap();
-}//---
-
 
 void PlayerCharacter::stop()
 {
@@ -368,38 +297,6 @@ void NPC::changeDirection()
 	x = oldX;
 	y = oldY;
 
-}//---
-
-
-void NPC::chasePC(float pcX, float pcY)
-{
-	if (x > pcX) x--;
-	if (x < pcX) x++;
-	if (y > pcY) y--;
-	if (y < pcY) y++;
-}//---
-
-
-void NPC::roam(float frameTime)
-{
-	oldX = x;
-	oldY = y;
-
-	// Move Forward
-	xVel = sin(angle * M_PI / 180) * speed * frameTime;
-	yVel = -cos(angle * M_PI / 180) * speed * frameTime;
-
-	// Randomise direction if NPC reach edges
-	if (x > (SCREEN_WIDTH - SPRITE_SIZE) || x < 0 || y > SCREEN_HEIGHT - SPRITE_SIZE || y < 0)
-	{
-		angle = rand() % 360 + 1;
-	}
-
-	screenLimit();
-
-	// Update positions
-	x += xVel;
-	y += yVel;
 }//---
 
 

@@ -19,7 +19,6 @@ public:
 	void screenLimit();
 	void screenBounce();
 	void screenWrap();	
-	void spawnItem();
 	void disableOffScreen();
 	float getX() { return x; }
 	float getY() { return y; }
@@ -33,7 +32,7 @@ protected: // derived classes can access
 	float speed = 100;
 	float angle = 0;
 	float health = 100;
-	float maxHealth = 100;
+	float maxHealth = 200;
 	float oldX = 0, oldY = 0;
 
 	SDL_Rect srcRect = { 0,0,0,0 };
@@ -82,8 +81,6 @@ public:
 	void updatePC(int keyPressed, float frameTime);
 	void renderPC();
 	void stepMove(int keyPressed);
-	void smoothMove(int keyPressed, float frameTime);
-	void rotateMove(int keyPressed, float frameTime);
 	float getX() { return x; }
 	float getY() { return y; }
 	float getAngle() { return angle; }
@@ -116,8 +113,6 @@ public:
 	void updateNPC();
 	void setAlive(bool state) { isActive = state; }
 	bool getAliveState() { return isActive; }
-	void roam(float frameTime);
-	void chasePC(float pcX, float pcY);
 	void setSpeed(float newSpeed) { speed = newSpeed; }
 	void screenCrawl(float frameTime);
 	float getX() { return x; }
