@@ -79,7 +79,7 @@ void Game::createGameObjects()
 	for (int i = 0; i < sizeof(fastNPCS) / sizeof(fastNPCS[0]); i++)
 	{
 		fastNPCS[i] = new NPC("assets/images/Circle_Purple.png", 0, 0, 0);
-		fastNPCS[i]->setSpeed(80);
+		fastNPCS[i]->setSpeed(70);
 		fastNPCS[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
 	}
 
@@ -145,6 +145,8 @@ void Game::loadMap(int levelNumber)
 	if (levelNumber == 1) Mix_PlayMusic(music, -1);
 	if (levelNumber == 2) Mix_PlayMusic(music, -1);
 	if (levelNumber == 3) Mix_PlayMusic(music, -1);
+	if (levelNumber == 4) Mix_PlayMusic(music, -1);
+	if (levelNumber == 5) Mix_PlayMusic(music, -1);
 
 	for (int row = 0; row < 18; row++)
 	{
@@ -206,6 +208,46 @@ void Game::loadMap(int levelNumber)
 						break;
 					}
 				}
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 5){ // Red Prism
+				GameObject* item = items[0];
+				if (item->getAliveState() == false) {
+					item->setX(col * SPRITE_SIZE);
+					item->setY(row * SPRITE_SIZE);
+					break;
+				}
+
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 6) { // Blue Prism
+				GameObject* item = items[1];
+				if (item->getAliveState() == false) {
+					item->setX(col * SPRITE_SIZE);
+					item->setY(row * SPRITE_SIZE);
+					break;
+				}
+
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 7) { // Yellow Prism
+				GameObject* item = items[2];
+				if (item->getAliveState() == false) {
+					item->setX(col * SPRITE_SIZE);
+					item->setY(row * SPRITE_SIZE);
+					break;
+				}
+
+			}
+
+			if (levelMaps->getTileContent(levelNumber, col, row) == 8) { // White Prism
+				GameObject* item = items[3];
+				if (item->getAliveState() == false) {
+					item->setX(col * SPRITE_SIZE);
+					item->setY(row * SPRITE_SIZE);
+					break;
+				}
+
 			}
 
 			if (levelMaps->getTileContent(levelNumber, col, row) == 9) // PC
@@ -763,10 +805,10 @@ void Game::update(float frameTime)
 		if (block->getAliveState()) block->update();
 	}
 
-	/*for (GameObject* item : items) // Update Items
+	for (GameObject* item : items) // Update Items
 	{
 		if (item->getAliveState() == true) item->update();
-	}*/
+	}
 
 	for (Projectile* bullet : bulletsPC) //--------- New Bullet
 	{
@@ -781,12 +823,8 @@ void Game::update(float frameTime)
 	//Item random spawn
 	int rando = rand() % 4;
 
-	if (SDL_GetTicks() % 15 == 0) {
-		int spawn_locationX = 1 + rand() % 30;
-		int spawn_locationY = 12 + rand() % 4;
-
-		items[rando]->setX(spawn_locationX);
-		items[rando]->setY(spawn_locationY);
+	if ((SDL_GetTicks()/1000) % 15 == 0) {
+		items[rando]->setAlive(true);
 	}
 
 
@@ -1124,6 +1162,8 @@ void Game::levelCompleteScreen()
 		if (currentLevel == 1) currentLevel = 1;
 		if (currentLevel == 2) currentLevel = 2;
 		if (currentLevel == 3) currentLevel = 3;
+		if (currentLevel == 4) currentLevel = 4;
+		if (currentLevel == 5) currentLevel = 5;
 	}
 	/*else if (timeLevel >= 30) // Ran out of time
 	{
@@ -1144,15 +1184,8 @@ void Game::levelCompleteScreen()
 		previousTime += timeLevel;
 		resetAllObjects();
 		// load the next map
-		if (currentLevel == 1)
-		{
-			currentLevel = 2;
-		}
-		else if (currentLevel == 2)
-		{
-			currentLevel = 3;
-		}
-		else if (currentLevel == 3)
+		currentLevel++;
+		if (currentLevel == 5)
 		{
 			screenText = "Well Done, You completed the game \n\nPress any key to play again";
 			loadMap(1);
