@@ -18,7 +18,7 @@ GameObject* health[10] = {};
 NPC* npcs[100] = {};
 NPC* tankNPCS[100] = {};
 NPC* fastNPCS[100] = {};
-Projectile* bulletsPC[10] = {};
+Projectile* bulletsPC[20] = {};
 Projectile* bulletsNPC[100] = {};
 GameObject* terrainBlocks[250];
 Levels* levelMaps = nullptr;
@@ -33,6 +33,7 @@ SDL_Texture* textTexture = nullptr;
 int timeLevel = 0;
 int previousTime = 0;
 int points = 0;
+int levelPoints = 0;
 
 //Audio
 Mix_Music* music = NULL;
@@ -57,7 +58,7 @@ void Game::createGameObjects()
 
 	printf("\nCreating Game Objects");
 	// Create Background
-	backGround = new GameObject("assets/images/BG_Grid_800.png", 0, 0);
+	backGround = new GameObject("assets/images/bush_background.png", 0, 0);
 	backGround->setSize(1920, 1080); // as not a standard sprite size
 
 	// Create Game Objects - filename , x and y pos, initial angle
@@ -68,7 +69,7 @@ void Game::createGameObjects()
 	for (int i = 0; i < sizeof(npcs) / sizeof(npcs[0]); i++)
 	{
 		npcs[i] = new NPC("assets/images/Circle_Red.png", 0, 0, 0);
-		npcs[i]->setSpeed(64);
+		npcs[i]->setSpeed(55);
 		npcs[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
 	}
 	for (int i = 0; i < sizeof(tankNPCS) / sizeof(tankNPCS[0]); i++)
@@ -79,7 +80,7 @@ void Game::createGameObjects()
 	}
 	for (int i = 0; i < sizeof(fastNPCS) / sizeof(fastNPCS[0]); i++)
 	{
-		fastNPCS[i] = new NPC("assets/images/Circle_Green.png", 0, 0, 0);
+		fastNPCS[i] = new NPC("assets/images/Circle_Red.png", 0, 0, 0);
 		fastNPCS[i]->setSpeed(70);
 		fastNPCS[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
 	}
@@ -133,7 +134,7 @@ void Game::createGameObjects()
 		terrainBlocks[i] = new GameObject("assets/images/bush_tile.png", 0, 0);
 	}
 	// Load Map  
-	loadMap(1);
+	loadMap(4);
 	currentLevel = 1;
 }//----
 
@@ -297,22 +298,34 @@ void Game::resetAllObjects()
 	for (GameObject* block : terrainBlocks)
 		block->setAlive(false);
 
+	levelPoints = 0;
+
 	for (NPC* npc : npcs)
 	{
 		npc->setAlive(false);
 		npc->setHP(100); // reset NPC health
+		npc->setVelX(0);
+		srand(time(NULL));
+		npc->setNextShotTime(rand() % 10000);
+
 
 	}
 	for (NPC* npc : tankNPCS)
 	{
 		npc->setAlive(false);
 		npc->setHP(200); // reset NPC health
+		npc->setVelX(0);
+		srand(time(NULL));
+		npc->setNextShotTime(rand() % 10000);
 
 	}
 	for (NPC* npc : fastNPCS)
 	{
 		npc->setAlive(false);
 		npc->setHP(75); // reset NPC health
+		npc->setVelX(0);
+		srand(time(NULL));
+		npc->setNextShotTime(rand() % 10000);
 
 	}
 
@@ -467,7 +480,7 @@ void Game::checkCollision()
 					yellow = true;
 					break;
 				case 3:
-					points += 1000;
+					levelPoints += 1000;
 					break;
 				}
 				
@@ -499,10 +512,12 @@ void Game::checkCollision()
 						if (yellow) {
 							bullet->setDamage(npc->getHP());
 						}
+						else
+							bullet->setDamage(30);
 						//npc->setAlive(false); // Disable the NPC
 						Mix_PlayChannel(-1, damageSound, 0);
 						npc->changeHP(-bullet->getDamage()); // Apply damage
-						points += 100;
+						levelPoints += 100;
 						bullet->setAlive(false); // disable bullet
 					}
 				}
@@ -530,6 +545,8 @@ void Game::checkCollision()
 							bullet->setDamage(npc->getHP());
 						}
 						//npc->setAlive(false); // Disable the NPC
+						else
+							bullet->setDamage(30);
 						Mix_PlayChannel(-1, damageSound, 0);
 						npc->changeHP(-bullet->getDamage()); // Apply damage
 						points += 500;
@@ -553,6 +570,8 @@ void Game::checkCollision()
 					if (yellow) {
 						bullet->setDamage(npc->getHP());
 					}
+					else
+						bullet->setDamage(30);
 					bulletRect.x = bullet->getX(); // Update the rect
 					bulletRect.y = bullet->getY();
 					bulletRect.w = bulletRect.h = bullet->getSize();
@@ -561,8 +580,7 @@ void Game::checkCollision()
 					{
 						//npc->setAlive(false); // Disable the NPC
 						Mix_PlayChannel(-1, damageSound, 0);
-						npc->changeHP(-bullet->getDamage()); // Apply damage
-						points += 200;
+						levelPoints += 200;
 						bullet->setAlive(false); // disable bullet
 					}
 				}
@@ -743,6 +761,12 @@ void Game::update(float frameTime)
 		yellow = false;
 	}
 
+	if (timeLevel - itemTime == 15) { //Disable items if not picked up for a certain amount of time
+		for (GameObject* item : items) {
+			item->setAlive(false);
+		}
+	}
+
 	// Set NPC Behaviours
 	for (NPC* npc : npcs)
 	{
@@ -823,7 +847,6 @@ void Game::updateGUI()
 	// text to be on screen Left Side	
 	screenText = "Level: " + std::to_string(currentLevel);
 	screenText += "  NPCs: " + std::to_string(activeNPCs);
-
 	textColour = { 255, 255, 0 };
 
 	// render the text to screen
@@ -842,7 +865,7 @@ void Game::updateGUI()
 	textRect.h = 80;
 
 	screenText = "HP: " + std::to_string(int(pc->getHP()));
-	screenText += "      Points: " + std::to_string(points);
+	screenText += "      Points: " + std::to_string(levelPoints + points);
 	textColour = { 0, 255, 0 };
 
 	// render the text to screen
@@ -1147,6 +1170,7 @@ void Game::levelCompleteScreen()
 	{
 		// Display Continue Message
 		screenText = "             Well Done\n \nPress any key to try next level";	
+		points += levelPoints;
 		resetAllObjects();
 		// load the next map
 		currentLevel++;

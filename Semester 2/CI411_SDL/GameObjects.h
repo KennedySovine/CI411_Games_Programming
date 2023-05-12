@@ -119,6 +119,7 @@ public:
 	float getY() { return y; }
 	void setX(float newX) { x = newX; }
 	void setY(float newY) { y = newY; }
+	void setVelX(float newXVel) { xVel = newXVel; }
 
 	float getHP() { return health; }
 	void changeHP(float hpChange) { health += hpChange; }
