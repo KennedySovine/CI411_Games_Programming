@@ -233,9 +233,6 @@ void PlayerCharacter::updatePC(int keyPressed, float frameTime)
 	destRect.y = (int)y;
 }//-----
 
-
-// ======================================================= 
-
 // ======================================================= 
 
 void PlayerCharacter::stepMove(int keyPressed)
@@ -298,8 +295,6 @@ void NPC::changeDirection()
 	y = oldY;
 
 }//---
-
-
 
 void NPC::screenCrawl(float frameTime)
 {

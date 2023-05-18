@@ -49,9 +49,9 @@ int itemTime = 0;
 void Game::createGameObjects()
 {
 	// Load Audio
-	music = Mix_LoadMUS("assets/audio/DDLoop1.wav");
+	music = Mix_LoadMUS("assets/audio/levelMusic.mp3");
 	damageSound = Mix_LoadWAV("assets/audio/jump.wav");
-	shootSound = Mix_LoadWAV("assets/audio/shoot.wav");
+	shootSound = Mix_LoadWAV("assets/audio/PCAttack.mp3");
 
 	// Create Level Object
 	levelMaps = new Levels;
@@ -80,7 +80,7 @@ void Game::createGameObjects()
 	}
 	for (int i = 0; i < sizeof(fastNPCS) / sizeof(fastNPCS[0]); i++)
 	{
-		fastNPCS[i] = new NPC("assets/images/Circle_Red.png", 0, 0, 0);
+		fastNPCS[i] = new NPC("assets/images/Circle_Purple.png", 0, 0, 0);
 		fastNPCS[i]->setSpeed(70);
 		fastNPCS[i]->setNextShotTime(rand() % 10000); // Set Random shot time upto 10 Secs
 	}
@@ -134,7 +134,7 @@ void Game::createGameObjects()
 		terrainBlocks[i] = new GameObject("assets/images/bush_tile.png", 0, 0);
 	}
 	// Load Map  
-	loadMap(4);
+	loadMap(1);
 	currentLevel = 1;
 }//----
 
@@ -607,6 +607,7 @@ void Game::checkAttacks()
 				}
 				bullet->fire(pc->getX(), pc->getY(), pc->getAngle());
 				count++;
+				Mix_PlayChannel(-1, shootSound, 0);
 				break; // stop checking the array
 			}
 		}
@@ -625,6 +626,7 @@ void Game::checkAttacks()
 				}
 				bullet->fireAtTarget(pc->getX(), pc->getY(), playerInput.mouseX, playerInput.mouseY);
 				count++;
+				Mix_PlayChannel(-1, shootSound, 0);
 				break; // stop checking the array
 			}
 		}
@@ -1087,12 +1089,6 @@ void Game::startSDL(const char* title)
 
 void Game::welcomeScreen()
 {
-	GameObject* splashScreen;
-	splashScreen = new GameObject("assets/images/Start_Screen_800.png", 0, 0);
-	splashScreen->setSize(1920, 1080);
-	splashScreen->render();
-	SDL_RenderPresent(renderer);
-	SDL_Delay(500);
 
 	// Load a Background to cover the sprites
 	GameObject* background;
@@ -1106,10 +1102,11 @@ void Game::welcomeScreen()
 	textColour = { 0, 0, 0 };
 	SDL_Rect textRect = { 100, 150,0,0 }; // start position of the text	
 
-	screenText = "Welcome to CI411 example Game";
-	screenText += "\n \n \n\n Collect all the Red Stars to complete a level";
-	screenText += "\n \n Watch out for the Angry Tomatoes";
+	screenText = "Welcome to the prototype for 'Prism of Lights'";
+	screenText += "\n \n \n\n Kill all of the enemies to advance to the next level. ";
+	screenText += "\n \n Grab any prisms that may spawn periodically. They provide helpful buffs";
 	screenText += "\n \n WASD to Move and Mouse to shoot";
+	screenText += "\n \n Try to achieve the highest score possible!";
 	screenText += "\n \n \n\n\n Press any key to start";
 
 	// render the text to screen
