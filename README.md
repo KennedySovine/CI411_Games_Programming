@@ -1,4 +1,3 @@
-# CI411 - Introduction to Games Programming
 2022-2023 Intro to Games Programming. University of Brighton, Computer Science for Games
 ## Assessment 1
 Assessment 1 was rather simple as a start to the programming fundamentals. Throughout the year, we were assigned workshop tasks to work on during our labs. After each workshop was done, we were instructed to create a workshop log showing our code snippets, reflections on our reading, and detailing any further work we did. 
