@@ -3,7 +3,7 @@
 ## Assessment 1
 Assessment 1 was rather simple as a start to the programming fundamentals. Throughout the year, we were assigned workshop tasks to work on during our labs. After each workshop was done, we were instructed to create a workshop log showing our code snippets, reflections on our reading, and detailing any further work we did. 
 
-For the assessment, we were tasked with compiling all of the logs into one [Word](/Semester%201/CI411_ASSESSMENT1.docx) document for submission.
+For the assessment, we were tasked with compiling all of the logs into one Word document for submission. The PDF can be found [here](/Semester%201/CI411_ASSESSMENT1.pdf)
 ## Assessment 2
 Assessment 2 was much different than the first. Instead of learning more about programming, we were tasked with using what we learned and creating a 2D FPS game using the SDL library and coding with C++, which is what we learned in the first semester.
 
@@ -12,3 +12,5 @@ The game I came up with is called <i>'Prism of Lights'</i>. Originally, I wished
 Unfortunately, while developing the game, I ran into many issues. Textures wouldn't load properly and the game is essentially unplayable after the first level. Fortunately, the assignment was to only make a prototype and log any/all bugs and issues, especially if they could not be fixed.
 
 I created orignal assets for the prisms and found the other assets through online search.
+
+The report for this assignment can be found at this [README](/Semester%202)
