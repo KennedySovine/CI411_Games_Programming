@@ -1,63 +1,59 @@
-**University of Brighton 
-Computer Games**
+# CI411 - Introduction to Game Programming 2022-23
+## Coursework 2: C++ SDL Game
 
-# **CI411 - Introduction to Game Programming 2022-23**
- Coursework 2: C++ SDL Game
+#### Module Leader: David Dorrington
+#### Student: Kennedy Sovine
+#### Date: May 14, 2023
 
-Module Leader: David Dorrington
+---
 
-Student: Kennedy Sovine <br>
- Date: May 14, 2023
+# Table of Contents
 
-#
+[Table of Contents](#table-of-contents)
 
-Table of Contents
+[Introduction](#introduction)
 
-[Table of Contents](#_Toc134962498)
+[Game Design](#game-design)
 
-[Introduction](#_Toc134962499)
+[Type and Style of Game](#type-and-style-of-game)
 
-[Game Design](#_Toc134962500)
+[Screen Layout and Format](#screen-layout-and-format)
 
-[Type and Style of Game / Genre](#_Toc134962501)
+[Control System](#control-system)
 
-[Screen Layout and Format](#_Toc134962502)
+[Gameplay and Core Rules](#gameplay-and-core-rules)
 
-[Control System](#_Toc134962503)
+[Level Designs](#level-designs)
 
-[Gameplay & Core Rules](#_Toc134962504)
+[Implementation](#implementation)
 
-[Level Designs](#_Toc134962505)
+[Game Objects Diagram](#game-objects-diagram)
 
-[Implementation](#_Toc134962506)
+[Program Structure](#program-structure)
 
-[Game Objects Diagram](#_Toc134962507)
+[Player Controlled Objects and Character](#player-controlled-objects-and-character)
 
-[Program Structure](#_Toc134962508)
+[NPCs](#npcs)
 
-[Player Controlled Objects / Character](#_Toc134962509)
+[Objects](#objects)
 
-[NPCs](#_Toc134962510)
+[Interface](#interface)
 
-[Objects](#_Toc134962511)
+[Game Management](#game-management)
 
-[Interface](#_Toc134962512)
+[Testing, Problems and Solutions](#testing,-problems,-and-solutions)
 
-[Game Management](#_Toc134962513)
+[Critical Review](#critical-review)
 
-[Testing, Problems & Solutions](#_Toc134962514)
+[Conclusion](#conclusion)
 
-[Critical Review](#_Toc134962515)
+[Bibliography](#bibliography)
 
-[Conclusion](#_Toc134962516)
+[Graphical Assets](#graphical-assets)
 
-[Bibliography](#_Toc134962517)
+[Audio Assets](#audio-assets)
 
-[Graphical Assets](#_Toc134962518)
-
-[Audio Assets](#_Toc134962519)
-
-[Appendices](#_Toc134962520)
+[Appendices](#appendices)
 
 [How to play / game Walkthrough](#_Toc134962521)
 
@@ -77,7 +73,7 @@ Lastly, the end of the document contains the bibliography and appendices, which 
 
 This section details the design decisions made for the game. The game is an arcade-style shooter inspired by the mechanics of classics such as _'Space Invaders.'_ This game is called '_Prism of Lights.'_
 
-## Type and Style of Game / Genre
+## Type and Style of Game
 
 The genre of the game is an arcade-style shooter. The conventions of these types of games are low-res sprites, along with simple mechanics of 'point-and-shoot'. Since these games were first created for arcades, they are meant simply for entertainment and quick play. There is no story nor deeper meaning behind them like modern video games. Center of the pa
 
@@ -97,7 +93,7 @@ The methods of control are WASD and the mouse. WASD is used for movement control
 | --- | --- | --- | --- | --- | --- |
 | Action | Move Forward | Move to the Left | Move Backwards | Move to the Right | Shoot |
 
-## Gameplay & Core Rules
+## Gameplay and Core Rules
 
 The intended gameplay style is a simple point-and-shoot, where the player shoots the enemies and can earn power-ups by moving around the map.
 
@@ -160,7 +156,7 @@ Figure 6 shows the core game loop of the game. Essentially, the game is a loop o
  |
 | --- | --- |
 
-## Player Controlled Objects / Character
+## Player Controlled Objects and Character
 
 - Player is controlled by the WASD keys.
 - Key states are alive and dead, with some variables being its health and shot power.
@@ -212,7 +208,7 @@ Figure 6 shows the core game loop of the game. Essentially, the game is a loop o
 
 **Figure 12: Screenshot of the function 'resetAllObjects'. This resets all objects, including NPCs whenever a level is won/lost**
 
-# Testing, Problems & Solutions
+# Testing, Problems, and Solutions
 
 | **Priority** | **Problem** | **Solution** | **Implemented** |
 | --- | --- | --- | --- |
@@ -222,7 +218,6 @@ Figure 6 shows the core game loop of the game. Essentially, the game is a loop o
 | Medium | On loading of a level after the first time, the NPCs don't move from left to right. Instead, some move right to left. | Resetting the NPCs' xVelocity to 0 when calling "resetobjects" | Solution has been implemented within timescale. |
 | High | Some terrain blocks on the right-hand side are not properly spawning in. | Add more terrain blocks to the array (DID NOT WORK) I have no idea how to fix this issue. By all intents and purposes, this shouldn't be happening. | Need further research into the problem |
 
-#
 
 # Critical Review
 
@@ -238,28 +233,9 @@ Through this process, I have learned how to make a retro-style arcade shooter. W
 
 In development, I learned key concepts of difficulty scaling and proper gameplay experience. There is a fine line between making levels more difficult as you progress and making progress impossible. In the type of game I decided to make, there is no objective progress. Essentially, everything resets every level, making no progress to the character itself. The only thing that changes are the type of enemies you encounter and how many. This makes no scaling factor for the player. It is the type of game you play with a quarter in an arcade, which is the type of game we were tasked to create.
 
--
-#
-
 # Bibliography
 
 ## Graphical Assets
-
-| **Image** | **name** | **Used for** | **Sourced from** |
-| --- | --- | --- | --- |
-| ![](RackMultipart20230519-1-inoot7_html_5c6afbc8e4b07d72.png) | Bush\_background.png | Background for all levels | Modification of bush image. (user17446225, n.d.) |
-|
- ![](RackMultipart20230519-1-inoot7_html_b99831ea617bf2b7.jpg)
- | Bush.png | Tile for shrubbery border | Freepik (user17446225, n.d.) |
-| ![](RackMultipart20230519-1-inoot7_html_8dd60edfa09b4aa0.png) | Blue\_prism.png | Blue prism item | Created by author in Procreate. |
-| ![](RackMultipart20230519-1-inoot7_html_9b6645939f058b9f.png) | Red\_prism.png | Red prism item | Created by author in Procreate. |
-| ![](RackMultipart20230519-1-inoot7_html_2a69a58321f0c7e8.png) | White\_prism.png | White prism item | Created by author in Procreate. |
-| ![](RackMultipart20230519-1-inoot7_html_3d8f1c1aafbedf35.png) | Yellow\_prism.png | Yellow prism item | Created by author in Procreate. |
-| ![](RackMultipart20230519-1-inoot7_html_310dbff9412627cc.png) | GameOverScreen.png | Game over screen | Given materials during classtime. |
-| ![](RackMultipart20230519-1-inoot7_html_5cd1065ce4d072a5.png) | Pawn\_Purple.png | Player-Character | Given materials during classtime. |
-| ![](RackMultipart20230519-1-inoot7_html_92a08acd1df33bef.png) | Circle\_Red.png | Normal NPCs | Given materials during classtime. |
-| ![](RackMultipart20230519-1-inoot7_html_a794eedb6d0b8be2.png) | Circle\_Blue.png | Tank NPCs | Given materials during classtime. |
-| ![](RackMultipart20230519-1-inoot7_html_6d8fbed4236babdd.png) | Circle\_Purple.png | Fast NPCs | Given materials during classtime. |
 
 ## Audio Assets
 
@@ -269,7 +245,6 @@ In development, I learned key concepts of difficulty scaling and proper gameplay
 | Player Attack | PC Attack | PCAttack.mp3 (Free Gun Sound Effects, n.d.) |
 | Explosion | NPC hit | Explosion.wav Given material during classtime |
 
-#
 
 # Appendices
 
